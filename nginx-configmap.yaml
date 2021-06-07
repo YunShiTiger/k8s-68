@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap
+data:
+  port: "80"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.14.2
+      ports:
+        - name: http
+          containerPort: 80
+      env:
+        - name: NGINX_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: nginx-configmap
+              name: port
+              # 修改端口，可以发现使用环境变化注入pod中的端口不会根据配置的更改而变化
+              # optional: true
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+
+  volumes:
+    - name: nginxconf
+      configMap:
+        name: nginx-configmap

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  # dnsPolicy: "Default" // 与宿主机一样
+  # dnsPolicy: "ClusterFirst" # 可以解析集群内域名
+  dnsPolicy: "None"  # 自定义DnsPolicy
+  dnsConfig:
+    nameservers:
+      - "1.2.3.4"
+    searchs:
+      - "xx.ns1.svc.cluster.local"
+      -  "xx.daemon.com"
+    options:
+      - name: ndots
+        values: "2"
+  containers:
+  - name: myapp
+    image: nginx
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+

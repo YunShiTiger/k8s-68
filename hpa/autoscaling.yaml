@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "50m"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
+---
+# kubectl autoscale  deployment/nginx  --max=5 --cpu-percent=80 --min=1 --max=100 --dry-run=client -o yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  metrics:
+    - type: Pods
+      pods: # 内置
+        metric:
+          name: cpu
+          selector:
+            matchLabels:
+              app: nginx
+        target:
+          type: Value
+
+    - type: Resource
+      resource: # 内置
+        name: cpu
+        target:
+          averageValue: "60"
+          type: Value
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageValue: "60Mi"
+          type: Value
+  # targetCPUUtilizationPercentage: 80
+# ab -c 1000 -n 5000000 http://localhost:80/index.html
+# the server could not find the requested resource (get pods.metrics.k8s.io)

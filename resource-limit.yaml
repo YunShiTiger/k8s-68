@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.2.6
+  #          resources:
+  #            limits:
+  #              memory: "1.5Gi"
+  #            requests:
+  #              memory: "800Mi"
+  selector:
+    matchLabels:
+      app: redis
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+spec:
+  selector:
+    app: redis
+  type: NodePort
+  ports:
+    - port: 30080
+      targetPort: 6379
+      nodePort: 30000
+
+
+---
+# 对象数量
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: object-counts
+  namespace: default
+spec:
+  hard:
+    configmaps: "10"
+    persistentvolumeclaims: "4"
+    pods: "4"
+    replicationcontrollers: "20"
+    secrets: "10"
+    services: "10"
+    services.loadbalancers: "2"
+
+---
+# 默认值,一般不用;但经常用来控制资源上限
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+    - type: Container
+      maxLimitRequestRatio:
+        cpu: 3
+        memory: 2
+      default:
+        cpu: 300m
+        memory: 200Mi
+      defaultRequest:
+        cpu: 200m
+        memory: 100Mi
+      max:
+        cpu: "2"
+        memory: 1Gi
+      min:
+        cpu: 100m
+        memory: 3Mi
+#资源生效位置，本名称空间内

@@ -1,0 +1,91 @@
+# kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+# docker cp 4827a1b3b59a:/etc/nginx/nginx.conf .
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: ingress-nginx
+  name: myingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  labels:
+    name: myingress
+spec:
+  tls:
+    - hosts:
+        - "myapp.magedu.com"
+      secretName: "nginx-ingress-secret"
+  rules:
+    - host: "myapp.magedu.com"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/v1"
+            backend:
+              service:
+                name: nginx
+                port:
+                  number: 8001
+          # - pathType: Prefix
+          #   path: "/v2"
+          #   backend:
+          #     name: tomcat
+          #     port:
+          #       number: 8002
+
+# http://myapp.magedu.com/v1
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: ingress-nginx
+  name: nginx
+spec:
+  clusterIP: "None"
+  # type: LoadBalancer
+  ports:
+    - name: nginx
+      port: 8001
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-rs
+  namespace: ingress-nginx
+  labels:
+    app: myapp-rs
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: nginx
+      release: canary
+      env: qa
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: nginx
+        release: canary
+        env: qa
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80 # 容器端口
+              name: http
+          # resources:
+          #   limits:
+          #     memory: 256Mi
+          #     cpu: "1"
+          #   requests:
+          #     memory: 128Mi
+          #     cpu: "0.2"
+#  pod*3 + rs
+#  rs 会替换pod的名字 spec.template.metadata.name 不生效
+

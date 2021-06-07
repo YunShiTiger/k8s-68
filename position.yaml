@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  # nodeName: master
+  # nodeSelector:
+  #  name: master
+  affinity: # 亲和性
+    podAffninity:
+      requiredDuringSchedulingIngnoreDuringExecution:
+        - labelSelector:
+            matchExpression:
+              - { key: app, operator: In, values: ["tomcat"] }
+          topologyKey: kubernetes.io/hostname # 内置label,表现调度到app=tomact同一节点上
+          namespaces:
+            - "default"
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 80
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - { key: app, operator: In, values: ["cache"] }
+            topologyKey: zone
+        - weight: 20
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - { key: app, operator: In, values: ["db"] }
+            topologyKey: zone
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 60
+          preference:
+            matchExpressions:
+              - { key: zone, operator: In, values: ["foo"] }
+        - weight: 30
+          preference:
+            matchExpressions:
+              - { key: ssd, operator: Exists, values: [] }
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms: #满足一个就行
+          - matchExpressions:
+              - { key: zone, operator: In, values: ["foo"] }
+              - { key: ssd, operator: Exists, values: [] } #增加一个规则
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - { key: app, operator: In, values: ["myapp"] }
+          topologyKey: kubernetes.io/hostname
+  containers:
+    - name: myapp
+      image: nginx
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      ports:
+        - containerPort: 80
+  tolerations:
+    - operator: Exists
+      effect: NoSchedule
+    - key: NoExecute
+      effect: PreferNoSchedule
+    - effect: NoSchedule
+      key: node-type
+      value: production
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: production
+      tolerationSecondes: 3600
+# ---
+# apiVersion: v1
+# kind: Node
+# metadata:
+#   name: master
+# spec:
+#   podCIDR: 100.64.0.0/24
+#   podCIDRs:
+#     - 100.64.0.0/24
+#   taints:
+#     - effect: NoSchedule
+#       key: node-type
+#       value: production

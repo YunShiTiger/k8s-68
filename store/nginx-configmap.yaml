@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-cm
+data:
+  port: "80"
+  port2: "80"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo-cm
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.14.2
+      ports:
+        - name: http
+          containerPort: 80
+      env:
+        - name: NGINX_PORT
+          valueFrom:
+            configMapKeyRef:
+              # 启动时初始化配置
+              key: port
+              name: nginx-configmap
+              optional: true
+      volumeMounts:
+        - mountPath: /etc/nginx/config.d/
+          name: nginxconf
+          # 会同步过来
+          # 会将cm的每个key当成一个文件写到磁盘上
+          readOnly: true
+  volumes:
+    - name: nginxconf
+      configMap:
+        name: nginx-cm
+        items:
+          - key: port
+            path: port_file
+            mode: 0777

@@ -1,0 +1,45 @@
+# store1
+yum install nfs-utils -y
+mkdir /data/volumes -pv
+echo -e '
+/data/volumes/v1    172.20.0.0/16(rw,no_root_squash)
+/data/volumes/v2    172.20.0.0/16(rw,no_root_squash)
+/data/volumes/v3    172.20.0.0/16(rw,no_root_squash)
+/data/volumes/v4    172.20.0.0/16(rw,no_root_squash)
+/data/volumes/v5    172.20.0.0/16(rw,no_root_squash)
+'> /etc/exports
+exportfs -arv
+showmount -e
+
+systemctl start nfs
+systemctl enable rpcbind.service
+
+
+
+# node01
+yum install nfs-utils -y
+mount -t nfs store1:/data/volumes /mnt
+k8s 各节点不需要这个操作
+
+
+###############方式一###################
+|-------------------------|         |-------------------------|
+|       namespace         |         |  storageclass <---> pv  |
+|pod <--> volume <--> pvc | <-----> |            pv           |   <---->    nfs、iSCSI、Ceph、Glusterfs
+|-------------------------|         |-------------------------|
+        Developers                         Cluster Admin                            Store Admin
+
+###############方式二###################
+|-------------------------|         |-------------------------|
+|       namespace         |         |  storageclass <---> pv  |
+|pod (pvcc) <-------> pvc | <-----> |            pv           |   <---->    nfs、iSCSI、Ceph、Glusterfs
+|-------------------------|         |-------------------------|
+        Developers                         Cluster Admin                            Store Admin
+会动态创建pvc并绑定到pod
+
+
+1、 pvc -- pv 一一绑定
+2、 同一个pvc可以被多个pod访问
+
+
+Provisioning（配置）---> Binding（绑定）--->Using（使用）---> Releasing（释放） ---> Recycling（回收）

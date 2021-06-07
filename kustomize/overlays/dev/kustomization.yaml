@@ -1,0 +1,53 @@
+namespace: abc
+namePrefix: dev-
+bases:
+  - ../../base
+
+patchesStrategicMerge:
+  - replica.yaml
+  - image.yaml
+
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: kustomize
+      namespace: default
+    path: port.yaml
+
+# command 、env【value】 字段
+vars:
+  - name: config_value
+    objref:
+      kind: ConfigMap
+      name: myconfig
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.myconf
+
+# 这个标签将添加到所有的 ConfigMap 和 Secret 中。
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    fruit: apple
+
+#https://kubectl.docs.kubernetes.io/zh/api-reference/kustomization/configmapgenerator/
+configMapGenerator:
+  - name: myconfig
+    options:
+      annotations:
+        dashboard: "1"
+      labels:
+        app.kubernetes.io/name: "app1"
+    files:
+      - myconf=mycnf.prop
+  - name: my-java-server-env-vars
+    literals:
+      - JAVA_HOME=/opt/java/jdk
+      - JAVA_TOOL_OPTIONS=-agentlib:hprof
+    options:
+      disableNameSuffixHash: true
+      labels:
+        pet: dog
+

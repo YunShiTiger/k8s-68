@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    from: dev
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: centos
+  namespace: dev
+  labels:
+    app: centos
+spec:
+  containers:
+    - name: centos
+      image: centos:7
+      command:
+        - "/bin/sh"
+        - "-c"
+        - "ping 127.0.0.1"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+  labels:
+    from: prod
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: prod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-centos-ingress
+  namespace: prod
+spec:
+  podSelector: {} # 所有pod
+  policyTypes:
+    - Ingress # NetworkPolicy类型，可以是Ingress，Egress，或者两者共存
+  # ingress:
+  #  - {} #所有生效
+  ingress: #定义入站规则
+    - from:
+        # - ipBlock:
+        #     cidr: 10.244.0.0/16
+        #     except: #排除的网段
+        #       - 10.244.3.0/24
+        - podSelector: #选定当前default名称空间，标签为app:myapp可以入站
+            matchLabels:
+              app: centos
+        - namespaceSelector:
+            matchLabels:
+              from: dev
+      ports: #开放的协议和端口定义
+        - protocol: TCP
+          port: 80
+    - from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: name
+                operator: In
+                values: ["default", "kube-system"]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchExpressions:
+              - key: name
+                operator: In
+                values: ["default", "kube-system"]

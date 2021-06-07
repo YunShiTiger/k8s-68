@@ -1,0 +1,24 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /app/log/*.json
+    encoding: utf-8
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: log
+    exclude_lines: []
+    harvester_buffer_size: 16384
+    close_rename: true
+    tags: ["demo"]
+    field:
+      appid: flask
+#----------------------------- Elasticsearch output --------------------------------
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  index: "filebeat-%{+YYYY.MM.dd}"
+#  username: "elastic"
+#  password: "${ES_PWD}"
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
