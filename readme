@@ -1,78 +1,8 @@
-# k8s   v1.20.6
-
-
-节点IP地址	角色	安装组件名称
-192.168.33.100	    master01（管理节点）	etcd、kube-apiserver、kube-controller-manager、kube-scheduler
-192.168.33.101	node01（计算节点）	docker 、kubelet、kube-proxy
-192.168.33.102	node02（计算节点）	docker 、kubelet、kube-proxy
-192.168.33.103	node03（计算节点）	docker 、kubelet、kube-proxy
-
-
+# k8s
 
 ## ingress-nginx
 https://kubernetes.github.io/ingress-nginx/deploy/
 
-k8s.gcr.io/ingress-nginx/controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a
--->
-willdockerhub/ingress-nginx-controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a
-
-
-
 ## docker for desktop
 https://github.com/AliyunContainerService/k8s-for-docker-desktop
-
-## ssh
-ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
-ssh-copy-id -i ~/.ssh/id_dsa.pub root@node02
-root 用户免密登录
-
-# k8s 部署脚本 star
-https://github.com/matrix-ops/kbi.git
-
-
-# OPTS="$OPTS,\"$(eval echo $(eval echo '$'"$node"))\""
-
-export https_proxy=http://10.10.10.20:1081
-curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
-yum clean all
-yum makecache
-yum install wget socat  bind-utils ipvsadm net-tools   bash-completion -y
-source /usr/share/bash-completion/bash_completion
-#wget -c https://sealyun.oss-cn-beijing.aliyuncs.com/latest/sealos && chmod +x sealos && mv sealos /usr/bin
-wget -c https://github.com/fanux/sealos/releases/download/v3.3.8/sealos && chmod +x sealos && mv sealos /usr/bin
-unset https_proxy
-
-wget -c https://sealyun.oss-cn-beijing.aliyuncs.com/a5b75f544aacf52822f3736a716dd16f-v1.21.0/kube1.21.0.tar.gz
-
-sealos init --passwd 'root' --master 192.168.33.100 --node 192.168.33.101 --node 192.168.33.102  --pkg-url /root/kube1.21.0.tar.gz --version v1.21.0
-sealos clean --master 192.168.33.100 --node 192.168.33.101 --node 192.168.33.102 --force
-#sealos init --passwd 'root' --master 192.168.33.100 --node 192.168.33.101 --node 192.168.33.102 --node 192.168.33.103  --node 192.168.33.104 --pkg-url /root/kube1.21.0.tar.gz --version v1.21.0
-#sealos clean --master 192.168.33.100 --node 192.168.33.101 --node 192.168.33.102 --node 192.168.33.103  --node 192.168.33.104 --force
-#sealos init --passwd 'root' --master 10.10.10.223 --node 10.10.10.224 --node 10.10.10.225  --pkg-url /root/kube1.21.0.tar.gz --version v1.21.0
-#sealos clean --master 10.10.10.223 --node 10.10.10.224 --node 10.10.10.225  --force
-
-
-
-[root@linux-node01 ~]# ipvsadm -Ln　　
-IP Virtual Server version 1.2.1 (size=4096)
-Prot LocalAddress:Port Scheduler Flags
-  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
-TCP  10.1.0.1:443 rr persistent 10800
-  -> 192.168.56.11:6443           Masq    1      0          0
-TCP  10.1.213.126:80 rr
-  -> 10.2.73.10:80                Masq    1      0          1
-  -> 10.2.73.11:80                Masq    1      0          1
-  -> 10.2.73.12:80                Masq    1      0          0
-
-查看LVS状态可以看到，当访问VIP：10.1.213.126时，会进行负载均衡到各个pod
-
-mv /etc/resolv.conf /etc/resolv.conf.bak
-echo 'nameserver 114.114.114.114 ' > /etc/resolv.conf
-
-
-nslookup nginx 10.96.0.10
-
-
-
 
