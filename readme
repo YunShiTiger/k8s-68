@@ -3,6 +3,12 @@
 ## ingress-nginx
 https://kubernetes.github.io/ingress-nginx/deploy/
 
+k8s.gcr.io/ingress-nginx/controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a
+-->
+willdockerhub/ingress-nginx-controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a
+
+
+
 ## docker for desktop
 https://github.com/AliyunContainerService/k8s-for-docker-desktop
 
