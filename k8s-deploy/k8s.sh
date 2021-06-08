@@ -207,7 +207,7 @@ EOF
     ssh $node "netstat -tulnp | grep etcd"
   done
   # （8）验证ETCD集群
-  # etcdctl --endpoints=https://$master01:2379 --ca-file=/opt/kubernetes/ssl/ca.pem --cert-file=/opt/kubernetes/ssl/etcd.pem --key-file=/opt/kubernetes/ssl/etcd-key.pem cluster-health
+  etcdctl --endpoints=https://$master01:2379 --ca-file=/opt/kubernetes/ssl/ca.pem --cert-file=/opt/kubernetes/ssl/etcd.pem --key-file=/opt/kubernetes/ssl/etcd-key.pem cluster-health
 
 }
 
