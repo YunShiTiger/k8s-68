@@ -1,4 +1,12 @@
-# k8s
+# k8s   v1.20.6
+
+节点IP地址	角色	安装组件名称
+192.168.33.100	    master01（管理节点）	etcd、kube-apiserver、kube-controller-manager、kube-scheduler
+192.168.33.101	node01（计算节点）	docker 、kubelet、kube-proxy
+192.168.33.102	node02（计算节点）	docker 、kubelet、kube-proxy
+192.168.33.103	node03（计算节点）	docker 、kubelet、kube-proxy
+
+
 
 ## ingress-nginx
 https://kubernetes.github.io/ingress-nginx/deploy/
@@ -11,4 +19,10 @@ willdockerhub/ingress-nginx-controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba
 
 ## docker for desktop
 https://github.com/AliyunContainerService/k8s-for-docker-desktop
+
+## ssh
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+ssh-copy-id -i ~/.ssh/id_dsa.pub root@node02
+root 用户免密登录
+
 
