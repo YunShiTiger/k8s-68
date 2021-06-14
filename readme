@@ -25,4 +25,5 @@ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
 ssh-copy-id -i ~/.ssh/id_dsa.pub root@node02
 root 用户免密登录
 
-
+# k8s 部署脚本 star
+https://github.com/matrix-ops/kbi.git

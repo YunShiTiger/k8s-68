@@ -5,46 +5,6 @@ install_etcd() {
   mkdir -p /opt/etcd/ssl
   cd /opt/etcd/ssl
 
-  # （2）创建用来生成 CA 文件的 JSON 配置文件
-  cat >ca-config.json <<EOF
-{
-  "signing": {
-    "default": {
-      "expiry": "87600h"
-    },
-    "profiles": {
-      "kubernetes": {
-         "expiry": "87600h",
-         "usages": [
-            "signing",
-            "key encipherment",
-            "server auth",
-            "client auth"
-        ]
-      }
-    }
-  }
-}
-EOF
-  # （3）创建用来生成 CA 证书签名请求（CSR）的 JSON 配置文件
-  cat >ca-csr.json <<EOF
-{
-    "CN": "etcd CA",
-    "key": {
-        "algo": "rsa",
-        "size": 2048
-    },
-    "names": [
-        {
-            "C": "CN",
-            "L": "Beijing",
-            "ST": "Beijing",
-            "O": "k8s",
-            "OU": "System"
-        }
-    ]
-}
-EOF
   # （4）生成CA证书（ca.pem）和密钥（ca-key.pem）ca.csr
   cfssl gencert -initca ca-csr.json | cfssljson -bare ca
   # （5）分发证书

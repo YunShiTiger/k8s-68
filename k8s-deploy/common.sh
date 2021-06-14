@@ -142,8 +142,8 @@ set_proxy() {
     # export http_proxy=https://10.10.10.20:1081
     # export http_proxy=http://10.10.16.89:1087
     # export https_proxy=https://10.10.16.89:1087
-    export http_proxy=http://192.168.0.104:8080
-    export https_proxy=https://192.168.0.104:8080
+    # export http_proxy=http://192.168.0.104:8080
+    # export https_proxy=https://192.168.0.104:8080
     export http_proxy=http://192.168.0.104:1087
     export https_proxy=https://192.168.0.104:1087
     export HTTPS_PROXY=$http_proxy
@@ -177,37 +177,8 @@ unset_proxy() {
 
 install_software() {
     set_proxy
-    mkdir -p $curPath/cfssl
-    if [ -f "./cfssl/cfssl-certinfo_linux-amd64" ]; then
-        echo "cfssl-certinfo_linux-amd64 exist"
-    else
-        wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O $curPath/cfssl/cfssl-certinfo_linux-amd64
-    fi
-    if [ -f "./cfssl/cfssljson_linux-amd64" ]; then
-        echo "cfssljson_linux-amd64  exist"
-    else
-        wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O $curPath/cfssl/cfssljson_linux-amd64
-    fi
-    if [ -f "./cfssl/cfssl_linux-amd64" ]; then
-        echo "cfssl_linux-amd64 exist"
-    else
-        wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O $curPath/cfssl/cfssl_linux-amd64
-    fi
-    if [ -f "calico.yaml" ]; then
-        echo "calico.yaml exist"
-    else
-        # wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-        wget https://docs.projectcalico.org/v3.15/manifests/calico.yaml
-    fi
-    # docker.io/
-    sed -i 's/docker.io\///g' $curPath/calico.yaml
-    sed -i 's/v3.15.5/v3.15.1/g' $curPath/calico.yaml
-    rm -rf /usr/local/bin/cfssl*
-    cp $curPath/cfssl/cfssl-certinfo_linux-amd64 /usr/local/bin/cfssl-certinfo
-    cp $curPath/cfssl/cfssljson_linux-amd64 /usr/local/bin/cfssljson
-    cp $curPath/cfssl/cfssl_linux-amd64 /usr/local/bin/cfssl
 
-    chmod +x /usr/local/bin/cfssl*
+    # docker.io/
     mkdir software
     if [ -f "./software/kubernetes.tar.gz" ]; then
         echo "kubernetes.tar.gz exist"
