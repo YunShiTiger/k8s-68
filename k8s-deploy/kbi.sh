@@ -82,55 +82,6 @@ autoSSHCopy() {
     for i in ${nodeCount[@]}; do ssh-copy-id $i; done
 }
 
-installDocker() {
-
-    if [ -f "$curPath/software/docker-20.10.7.tgz" ]; then
-        echo -e "\033[32mdocker-20.10.7.tgz exist..........\033[0m"
-    else
-        wget https://download.docker.com/linux/static/stable/x86_64/docker-20.10.7.tgz -O $curPath/software/docker-20.10.7.tgz
-    fi
-    tar -zvxf $curPath/software/docker-20.10.7.tgz -C /tmp
-    cat <<EOF >/tmp/docker.service
-[Unit]
-Description=Docker Application Container Engine
-Documentation=https://docs.docker.com
-After=network-online.target firewalld.service
-Wants=network-online.target
-
-[Service]
-Type=notify
-ExecStart=/usr/bin/dockerd
-ExecReload=/bin/kill -s HUP \$MAINPID
-LimitNOFILE=infinity
-LimitNPROC=infinity
-TimeoutStartSec=0
-Delegate=yes
-KillMode=process
-Restart=on-failure
-StartLimitBurst=3
-StartLimitInterval=60s
-
-[Install]
-WantedBy=multi-user.target
-EOF
-    chmod +x /tmp/docker.service
-    for i in ${nodeCount[@]}; do
-        if $(ssh $i "[[ -f /usr/bin/dockerd ]]"); then
-            echo -e "\033[32m节点$i 已存在dockerd文件，跳过此步骤..........\033[0m"
-        else
-            scp /tmp/docker/* root@$i:/usr/bin &>/dev/null &
-        fi
-
-        scp /tmp/docker.service root@$i:/etc/systemd/system/docker.service
-        ssh root@$i "systemctl daemon-reload;systemctl enable docker.service;systemctl start docker;"
-        if [ $? ]; then
-            echo -e "\033[32m${i} docker启动成功\033[0m"
-        else
-            echo -e "\033[31m${i} docker启动失败，请检查日志\033[0m"
-        fi
-    done
-}
-
 # Preparation
 preparation() {
     echo -e "\033[32m开始执行部署流程..........\033[0m"
@@ -246,18 +197,17 @@ EOF
     if [[ ! -e /etc/kubernetes/pki/CA/ca.pem && ! -e /etc/kubernetes/pki/CA/ca-key.pem ]]; then
         cfssl gencert -initca /etc/kubernetes/pki/CA/ca-csr.json | cfssljson -bare ca
     fi
-    installDocker
     for i in ${nodeCount[@]}; do
         scp /etc/yum.repos.d/docker-ce.repo root@$i:/etc/yum.repos.d/
         scp /etc/sysctl.d/kubernetes.conf root@$i:/etc/sysctl.d/
         ssh $i "yum install -y wget tree curl chrony sysstat conntrack ipvsadm ipset jq iptables psmisc iptables-services libseccomp && modprobe br_netfilter && sysctl -p /etc/sysctl.d/kubernetes.conf && mkdir -p /etc/kubernetes/pki/CA &> /dev/null"
         ssh $i "systemctl mask firewalld ; setenforce 0 ; sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config"
         ssh $i "modprobe br_netfilter ip_vs_rr nf_conntrack nf_conntrack_ipv4 &> /dev/null"
-        # if [ -z "$dockerVersion" ]; then
-        #     ssh $i "yum install docker-ce -y"
-        # else
-        #     ssh $i "yum install docker-ce-$dockerVersion -y"
-        # fi
+        if [ -z "$dockerVersion" ]; then
+            ssh $i "yum install docker-ce -y"
+        else
+            ssh $i "yum install docker-ce-$dockerVersion -y"
+        fi
         scp /etc/kubernetes/pki/CA/* $i:/etc/kubernetes/pki/CA
         echo -e "\033[32m节点$i 初始化安装完成\033[0m"
         echo -e "\033[32m====================\033[0m"
@@ -740,7 +690,7 @@ EOF
         if $(ssh $i systemctl status flanneld &>/dev/null); then
             echo -e "\033[32m$i Flanneld正在运行中，跳过复制可执行文件步骤..........\033[0m"
         else
-            scp $curPath/software/flanneld/{flanneld,mk-docker-opts.sh} $i:/usr/local/bin/
+            scp $curPath/software/flanneld/{flanneld,mk-docker-opts.sh} $i:/usr/local/bin
         fi
 
         if $(ssh $i "[[ -f /etc/kubernetes/pki/flannel/flannel.pem && -f /etc/kubernetes/pki/flannel/flannel-key.pem ]]"); then
@@ -1445,16 +1395,16 @@ deployCoreDNS() {
     kubectl scale deploy -n kube-system coredns --replicas=${#NodeIP[@]}
 }
 
-autoSSHCopy
-preparation
-deployHaproxyKeepalived
-deployETCD
-setKubectl
-deployFlannel
-deployApiserver
-deployControllerManager
-deployScheduler
-deployKubelet
-deployKubeProxy
-deployIngressController
-deployCoreDNS
+# autoSSHCopy
+# preparation
+# deployHaproxyKeepalived
+# deployETCD
+# setKubectl
+# deployFlannel
+# deployApiserver
+# deployControllerManager
+# deployScheduler
+# deployKubelet
+# deployKubeProxy
+# deployIngressController
+# deployCoreDNS

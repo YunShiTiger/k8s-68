@@ -1,5 +1,6 @@
 # k8s   v1.20.6
 
+
 节点IP地址	角色	安装组件名称
 192.168.33.100	    master01（管理节点）	etcd、kube-apiserver、kube-controller-manager、kube-scheduler
 192.168.33.101	node01（计算节点）	docker 、kubelet、kube-proxy
