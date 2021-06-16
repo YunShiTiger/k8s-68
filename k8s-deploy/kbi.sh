@@ -984,12 +984,6 @@ EOF
             scp /etc/kubernetes/pki/controller-manager/* $i:/etc/kubernetes/pki/controller-manager/
         fi
 
-        # if $(ssh $ "[[ -f /etc/kubernetes/pki/controller-manager.conf ]]");then
-        #     echo -e "\033[32m$i 已存在kube-controller-manager证书私钥文件,跳过此步骤..........\033[0m"
-        # else
-        #     scp /usr/local/etc/kube-controller-manager.conf $i:/usr/local/etc/kube-controller-manager.conf &
-        # fi
-
         scp /usr/local/etc/kube-controller-manager.conf $i:/usr/local/etc/kube-controller-manager.conf
 
         if $(ssh $i "[[ -f /etc/systemd/system/kube-controller-manager.service ]]"); then
@@ -1395,16 +1389,16 @@ deployCoreDNS() {
     kubectl scale deploy -n kube-system coredns --replicas=${#NodeIP[@]}
 }
 
-# autoSSHCopy
-# preparation
-# deployHaproxyKeepalived
-# deployETCD
-# setKubectl
-# deployFlannel
-# deployApiserver
-# deployControllerManager
-# deployScheduler
-# deployKubelet
-# deployKubeProxy
-# deployIngressController
-# deployCoreDNS
+autoSSHCopy
+preparation
+deployHaproxyKeepalived
+deployETCD
+setKubectl
+deployFlannel
+deployApiserver
+deployControllerManager
+deployScheduler
+deployKubelet
+deployKubeProxy
+deployIngressController
+deployCoreDNS
