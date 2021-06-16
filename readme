@@ -27,3 +27,7 @@ root 用户免密登录
 
 # k8s 部署脚本 star
 https://github.com/matrix-ops/kbi.git
+
+
+
+# OPTS="$OPTS,\"$(eval echo $(eval echo '$'"$node"))\""
