@@ -1,24 +1,29 @@
 # store1
 yum install nfs-utils -y
-mkdir /data/volumes -pv
+mkdir -p /data/volumes/v{1,2,3,4,5}
 echo -e '
-/data/volumes/v1    172.20.0.0/16(rw,no_root_squash)
-/data/volumes/v2    172.20.0.0/16(rw,no_root_squash)
-/data/volumes/v3    172.20.0.0/16(rw,no_root_squash)
-/data/volumes/v4    172.20.0.0/16(rw,no_root_squash)
-/data/volumes/v5    172.20.0.0/16(rw,no_root_squash)
+/data/volumes/v1    192.168.0.0/16(rw,no_root_squash)
+/data/volumes/v2    192.168.0.0/16(rw,no_root_squash)
+/data/volumes/v3    192.168.0.0/16(rw,no_root_squash)
+/data/volumes/v4    192.168.0.0/16(rw,no_root_squash)
+/data/volumes/v5    192.168.0.0/16(rw,no_root_squash)
 '> /etc/exports
 exportfs -arv
-showmount -e
 
 systemctl start nfs
+systemctl enable nfs
+systemctl start rpcbind.service
 systemctl enable rpcbind.service
+showmount -e
+irewall-cmd --add-service=nfs --permanent
+firewall-cmd --reload
 
 
 
 # node01
 yum install nfs-utils -y
-mount -t nfs store1:/data/volumes /mnt
+systemctl start nfs
+mount -t nfs 192.168.33.104:/data/volumes/v1 /root/nfs
 k8s 各节点不需要这个操作
 
 

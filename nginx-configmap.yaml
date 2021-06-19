@@ -22,7 +22,6 @@ spec:
             configMapKeyRef:
               key: nginx-configmap
               name: port
-              # 修改端口，可以发现使用环境变化注入pod中的端口不会根据配置的更改而变化
               # optional: true
         - name: POD_IP
           valueFrom:
@@ -34,6 +33,5 @@ spec:
               fieldPath: metadata.namespace
 
   volumes:
-    - name: nginxconf
-      configMap:
-        name: nginx-configmap
+    - name: cfg
+      items:
