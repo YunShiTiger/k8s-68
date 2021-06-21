@@ -17,3 +17,6 @@ spec:
         requests:
           memory: 256Mi
           cpu: "0.2"
+  serviceAccountName: "default"
+  # imagePullSecrets:弃用、使用serviceAccountName
+  # -

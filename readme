@@ -30,5 +30,4 @@ root 用户免密登录
 https://github.com/matrix-ops/kbi.git
 
 
-
 # OPTS="$OPTS,\"$(eval echo $(eval echo '$'"$node"))\""

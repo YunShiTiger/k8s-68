@@ -9,3 +9,6 @@ sealos init --passwd 'root' --master 192.168.33.100 --node 192.168.33.101 --node
 
 ``````
 
+key证书 -> key 秘钥
+crt 秘钥
+ca签署证书
