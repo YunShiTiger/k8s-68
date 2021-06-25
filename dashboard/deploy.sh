@@ -1,17 +1,29 @@
 yum install bash-completion -y
 source /usr/share/bash-completion/bash_completion
+
+# key 私钥
+# csr 签名申请
+# crt  证书
+
+# 私钥 (可以用来解密、签名)
+# 公开的：公钥 证书(用私钥签名,经过CA认证的公钥;可以用来加密、验签)
+# 客户端拿着证书加密，服务端拿着私钥解密
+# 服务端会在建立连接后将证书发往客户端
+# 要达到数据安全传输的目的，必须发送方和接收方都持有对方的公钥和自己私钥；
+# 为保证自己所持有的的对方的公钥不被篡改，需要CA机构对其进行验证,即用ca的公钥解密证书;解密成功也就拿到了原始的公钥
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 # 去登录dashboard需要sa账号
 cd /etc/kubernetes/pki/
-# dashboard.key
+# dashboard.key 私钥
 (
     umask 077
     openssl genrsa -out dashboard.key 2048
 )
-#dashboard.crt
-openssl req -new -key dashboard.key -out dashboard.crt -subj "/O=magedu/CN=myapp.magedu.com"
+#dashboard.crt 证书申请
+openssl req -new -key dashboard.key -out dashboard.csr -subj "/O=magedu/CN=myapp.magedu.com"
 #对证书进行签名
-openssl x509 -req -in dashboard.crt -CA ca.crt -CAkey ca.key -CAcreateserial -out dashboard.crt -days 36500
+openssl x509 -req -in dashboard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out dashboard.crt -days 36500
 kubectl create secret generic dashboard-secret --from-file=dashboard.crt --from-file=dashboard.key -n kubernetes-dashboard
 kubectl create serviceaccount dashboard-admin -n kubernetes-dashboard
 kubectl create clusterrolebinding dashboard-cluster-admin --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:dashboard-admin
