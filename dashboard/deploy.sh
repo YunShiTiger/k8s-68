@@ -31,5 +31,5 @@ kubectl config set-cluster mykubernets --certificate-authority=./ca.crt --server
 # data.token 可以直接拿来登录
 token=$(kubectl get secret $(kubectl get secret -n kubernetes-dashboard | grep dashboard-admin-token | awk '{print $1}') -ogo-template --template='{{.data.token}}' | base64 --decode)
 kubectl config set-credentials dashboard-admin-tag --token=$token --kubeconfig=/root/admin.conf
-kubectl config set-context dashboard-admin-tag@mykubernets --cluster=mykubernets --user=dashboard-admin --kubeconfig=/root/admin.conf
+kubectl config set-context dashboard-admin-tag@mykubernets --cluster=mykubernets --user=dashboard-admin-tag --kubeconfig=/root/admin.conf
 kubectl config use-context dashboard-admin-tag@mykubernets --kubeconfig=/root/admin.conf

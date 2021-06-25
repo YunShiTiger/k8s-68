@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: myapp-rs
-  namespace: ingress-nginx
+  # namespace: ingress-nginx
   labels:
     app: myapp-rs
 spec:
@@ -39,10 +39,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  namespace: ingress-nginx
+  # namespace: ingress-nginx
   name: nginx
 spec:
-  # type: LoadBalancer
+  type: NodePort
   ports:
     - name: nginx
       port: 8001
