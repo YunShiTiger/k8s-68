@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
-
 spec:
   selector:
     matchLabels:
@@ -19,6 +18,9 @@ spec:
       labels:
         app: nginx
     spec:
+      hostIPC: true
+      hostNetwork: true
+      hostPID: true
       containers:
         - name: nginx
           image: nginx:1.14.2
@@ -33,5 +35,13 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
+        - name: redis
+          image: redis
+        - name: centos
+          image: centos:7
+          command:
+            - "/bin/bash"
+            - "-c"
+            - "/usr/bin/ping 127.0.0.1"
 # pod*5 + rs + dp
 
