@@ -8,9 +8,9 @@ spec:
   selector:
     app: myapp-pod
   ports:
-    - port: 80
+    - port: 8000
       name: web
-      # targetPort: <Target Port>
+      targetPort: 80
   clusterIP: None
 ---
 apiVersion: apps/v1
@@ -23,6 +23,7 @@ spec:
       app: myapp-pod
   serviceName: myapp-svc
   # 必须是无头服务,才能给每个pod一个唯一的标识符
+  # 在deployment中，每一个pod是没有名称，是随机字符串，是无序的。而statefulset中是要求有序的，每一个pod的名称必须是固定的。当节点挂了，重建之后的标识符是不变的，每一个节点的节点名称是不能改变的。pod名称是作为pod识别的唯一标识符，必须保证其标识符的稳定并且唯一。为了实现标识符的稳定，这时候就需要一个headless service 解析直达到pod，还需要给pod配置一个唯一的名称。
   replicas: 5
   template:
     metadata:
@@ -43,12 +44,11 @@ spec:
             - name: myappdata
               mountPath: /usr/share/nginx/html
   volumeClaimTemplates:
-    # 动态请求创建pvc
+    # 动态请求创建pvc,每个pod会有自己单独的pvc
     - metadata:
         name: myappdata
       spec:
         accessModes: ["ReadWriteOnce"]
-        # storageClassName: "gluster-dynamic"
         resources:
           requests:
             storage: 1Gi
