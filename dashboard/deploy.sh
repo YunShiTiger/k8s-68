@@ -24,6 +24,7 @@ cd /etc/kubernetes/pki/
 openssl req -new -key dashboard.key -out dashboard.csr -subj "/O=magedu/CN=myapp.magedu.com"
 #对证书进行签名
 openssl x509 -req -in dashboard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out dashboard.crt -days 36500
+openssl x509 -in magedu.crt -text -noout
 kubectl create secret generic dashboard-secret --from-file=dashboard.crt --from-file=dashboard.key -n kubernetes-dashboard
 kubectl create serviceaccount dashboard-admin -n kubernetes-dashboard
 kubectl create clusterrolebinding dashboard-cluster-admin --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:dashboard-admin

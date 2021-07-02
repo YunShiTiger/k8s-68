@@ -15,14 +15,12 @@ systemctl enable nfs
 systemctl start rpcbind.service
 systemctl enable rpcbind.service
 showmount -e
-irewall-cmd --add-service=nfs --permanent
+firewall-cmd --add-service=nfs --permanent
 firewall-cmd --reload
 
 
 
 # node01
-yum install nfs-utils -y
-systemctl start nfs
 mount -t nfs 192.168.33.104:/data/volumes/v1 /root/nfs
 k8s 各节点不需要这个操作
 

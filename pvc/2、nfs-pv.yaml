@@ -6,7 +6,7 @@ metadata:
     name: pv001
 spec:
   capacity:
-    storage: 2Gi
+    storage: 20Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
@@ -29,7 +29,7 @@ metadata:
     name: pv002
 spec:
   capacity:
-    storage: 1Gi
+    storage: 20Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
@@ -47,7 +47,7 @@ metadata:
     name: pv003
 spec:
   capacity:
-    storage: 3Gi
+    storage: 20Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
@@ -65,7 +65,7 @@ metadata:
     name: pv004
 spec:
   capacity:
-    storage: 4Gi
+    storage: 20Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
@@ -83,7 +83,7 @@ metadata:
     name: pv005
 spec:
   capacity:
-    storage: 5Gi
+    storage: 20Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
