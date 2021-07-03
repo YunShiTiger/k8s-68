@@ -1,7 +1,6 @@
 rm namespace.yaml* metallb.yaml* kube-flannel*
 wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
 wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
-wget https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 # kubectl delete -f metallb.yaml --force
 # kubectl delete -f config.yaml --force
 # kubectl delete -f namespace.yaml --force
@@ -11,7 +10,6 @@ wget https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
 kubectl apply -f namespace.yaml
 kubectl apply -f metallb.yaml
-kubectl apply -f kube-flannel.yml
 kubectl get configmap kube-proxy -n kube-system -o yaml |
   sed -e "s/strictARP: false/strictARP: true/" |
   kubectl apply -f - -n kube-system
@@ -30,7 +28,7 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - 192.168.33.100-192.168.33.102
+      - 192.168.33.200-192.168.33.202
 EOF
 
 kubectl get all -o wide -n metallb-system
