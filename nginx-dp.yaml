@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 5 # tells deployment to run 2 pods matching the template
+  replicas: 10 # tells deployment to run 2 pods matching the template
   revisionHistoryLimit: 10
   strategy:
     type: RollingUpdate
@@ -36,7 +36,7 @@ spec:
               memory: 256Mi
               cpu: "0.2"
         - name: redis
-          image: redis
+          image: redis:5
         - name: centos
           image: centos:7
           command:

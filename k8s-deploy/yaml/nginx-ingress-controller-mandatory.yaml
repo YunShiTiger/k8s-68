@@ -7,7 +7,6 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
 
 ---
-
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -48,7 +47,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: nginx-ingress-clusterrole
@@ -106,7 +105,7 @@ rules:
       - update
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: nginx-ingress-role
@@ -151,7 +150,7 @@ rules:
       - get
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: nginx-ingress-role-nisa-binding
@@ -169,7 +168,7 @@ subjects:
     namespace: ingress-nginx
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: nginx-ingress-clusterrole-nisa-binding
@@ -186,7 +185,6 @@ subjects:
     namespace: ingress-nginx
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -276,7 +274,6 @@ spec:
                   - /wait-shutdown
 
 ---
-
 apiVersion: v1
 kind: LimitRange
 metadata:
@@ -287,8 +284,8 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
 spec:
   limits:
-  - default:
-    min:
-      memory: 90Mi
-      cpu: 100m
-    type: Container
+    - default:
+      min:
+        memory: 90Mi
+        cpu: 100m
+      type: Container

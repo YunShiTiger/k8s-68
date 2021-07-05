@@ -811,7 +811,7 @@ KUBE_API_ARGS="--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount
   --bind-address=0.0.0.0 \\
   --insecure-port=0 \\
   --authorization-mode=Node,RBAC \\
-  --runtime-config=rbac.authorization.k8s.io/v1beta1 \\
+  --runtime-config=rbac.authorization.k8s.io/v1 \\
   --kubelet-https=true \\
   --token-auth-file=/etc/kubernetes/pki/bootstrap/token.csv \\
   --service-cluster-ip-range=${serviceNet} \\

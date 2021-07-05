@@ -48,6 +48,7 @@ spec:
     - metadata:
         name: myappdata
       spec:
+        # storageClassName: standard 默认dnfs
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
