@@ -12,25 +12,32 @@ source /usr/share/bash-completion/bash_completion
 # 要达到数据安全传输的目的，必须发送方和接收方都持有对方的公钥和自己私钥；
 # 为保证自己所持有的的对方的公钥不被篡改，需要CA机构对其进行验证,即用ca的公钥解密证书;解密成功也就拿到了原始的公钥
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
-# 去登录dashboard需要sa账号
 cd /etc/kubernetes/pki/
+# -------可以使用域名访问myapp.magedu.com--------------
 # dashboard.key 私钥
 (
     umask 077
     openssl genrsa -out dashboard.key 2048
 )
-#dashboard.crt 证书申请
+
+#magedu.crt 证书申请
 openssl req -new -key dashboard.key -out dashboard.csr -subj "/O=magedu/CN=myapp.magedu.com"
 #对证书进行签名
 openssl x509 -req -in dashboard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out dashboard.crt -days 36500
-openssl x509 -in magedu.crt -text -noout
-kubectl create secret generic dashboard-secret --from-file=dashboard.crt --from-file=dashboard.key -n kubernetes-dashboard
+openssl x509 -in dashboard.crt -text -noout # 查看证书信息
+kubectl create ns kubernetes-dashboard
+kubectl create secret generic kubernetes-dashboard-certs --from-file=magedu.crt --from-file=dashboard.key -n kubernetes-dashboard
+#----------------------------------
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+# 去登录dashboard需要sa账号
+# data.token 可以直接拿来登录
 kubectl create serviceaccount dashboard-admin -n kubernetes-dashboard
 kubectl create clusterrolebinding dashboard-cluster-admin --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:dashboard-admin
+DASHBOARD_LOGIN_TOKEN=$(kubectl get secret $(kubectl get secret -n kubernetes-dashboard | grep dashboard-admin-token | awk '{print $1}') -ogo-template --template='{{.data.token}}' | base64 --decode)
+echo ${DASHBOARD_LOGIN_TOKEN}
+
 kubectl config set-cluster mykubernets --certificate-authority=./ca.crt --server="https://192.168.33.100:6443" -embed-certs=true --kubeconfig=/root/admin.conf
-# data.token 可以直接拿来登录
-token=$(kubectl get secret $(kubectl get secret -n kubernetes-dashboard | grep dashboard-admin-token | awk '{print $1}') -ogo-template --template='{{.data.token}}' | base64 --decode)
-kubectl config set-credentials dashboard-admin-tag --token=$token --kubeconfig=/root/admin.conf
+kubectl config set-credentials dashboard-admin-tag --token=$DASHBOARD_LOGIN_TOKEN --kubeconfig=/root/admin.conf
 kubectl config set-context dashboard-admin-tag@mykubernets --cluster=mykubernets --user=dashboard-admin-tag --kubeconfig=/root/admin.conf
 kubectl config use-context dashboard-admin-tag@mykubernets --kubeconfig=/root/admin.conf
