@@ -22,7 +22,6 @@ sync() {
             res=`cat /tmp/res.txt |jq -r '.results[].name'`
             array=(${res// /,})
             len=${#array[*]}
-            echo $len $res
             for item in $res; do
                 if [ "$item" == "$tag" ]; then
                     flag=true
@@ -33,7 +32,7 @@ sync() {
             if [ "$tag" == "latest" ]; then
                 flag=false
             fi
-            echo '------->' $flag $Repo:$tag
+            echo $len ' ------->' $flag $Repo:$tag
             if $flag; then
                 continue
             else
@@ -57,7 +56,6 @@ sync 'k8s.gcr.io/sig-storage/hostpathplugin'
 sync 'k8s.gcr.io/sig-storage/livenessprobe'
 sync 'k8s.gcr.io/sig-storage/csi-provisioner'
 sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
-
 EOF
 chmod +x sync_image.sh
 ./sync_image.sh
