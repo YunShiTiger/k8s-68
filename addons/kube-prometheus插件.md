@@ -18,28 +18,14 @@ kube-prometheus 是一整套监控解决方案，它使用 Prometheus 采集集�
 ``` bash
 # 每台机器
 yum install ntpdate -y;ntpdate time1.aliyun.com
-# 适用 k8s 1.21 1.22
-git clone https://github.com/coreos/kube-prometheus.git -b v0.9.0
+git clone https://github.com/coreos/kube-prometheus.git
 cd kube-prometheus/
-git checkout v0.9.0
 # 使用科大的 Registry
 sed -i 's_quay.io_quay.mirrors.ustc.edu.cn_' manifests/*.yaml manifests/setup/*.yaml
 sed -i -e 's_k8s.gcr.io/kube-state-metrics/kube-state-metrics:_acejilam/kube-state-metrics:_' manifests/*.yaml manifests/setup/*.yaml
-sed -i -e 's_k8s.gcr.io/prometheus-adapter/prometheus-adapter:_acejilam/prometheus-adapter:_' manifests/*.yaml manifests/setup/*.yaml
-# k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.9.0
 
 kubectl apply -f manifests/setup # 安装 prometheus-operator
 kubectl apply -f manifests/ # 安装 promethes metric adapter
-# 增大权限
-kubectl patch clusterrole prometheus-k8s -p '{"rules":[{"apiGroups":[""],"resources":["nodes/metrics","endpoints","pods","services"],"verbs":["get","list","watch"]},{"nonResourceURLs":["/metrics"],"verbs":["get"]}]}'
-# 如果还采集不到指标，将monitoring下所有pod删除,只删pod
-# kubectl -n monitoring logs -f service/prometheus-k8s -c prometheus
-
-
-```
-```
-kubectl delete -f manifests/ # 安装 promethes metric adapter
-kubectl delete -f manifests/setup # 安装 prometheus-operator
 ```
 
 ## 查看运行状态
@@ -48,7 +34,7 @@ kubectl delete -f manifests/setup # 安装 prometheus-operator
 kubectl get pods -n monitoring
 kubectl top pods -n monitoring
 # kubectl logs pod/prometheus-k8s-0 -c prometheus -n monitoring
-kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9090 &
+kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9090
 
 ```
 + port-forward 依赖 socat。
@@ -63,7 +49,7 @@ kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9
 启动代理：
 
 ``` bash
-kubectl port-forward --address 0.0.0.0 svc/grafana -n monitoring 3000:3000
+$ kubectl port-forward --address 0.0.0.0 svc/grafana -n monitoring 3000:3000
 Forwarding from 0.0.0.0:3000 -> 3000
 ```
 kubectl patch  -n monitoring  svc/grafana -p '{"spec":{"type":"LoadBalancer"}}'
@@ -77,5 +63,25 @@ https://grafana.com/grafana/dashboards?search=kubernetes
 
 
 
-kubectl patch svc/grafana -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'
-kubectl patch svc/prometheus-k8s -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'
+
+
+
+
+git clone https://github.com/stefanprodan/k8s-prom-hpa
+cd k8s-prom-hpa
+kubectl apply -f namespaces.yaml
+sed -i -e 's_k8s.gcr.io/metrics-server-amd64:_acejilam/metrics-server-amd64:_' ./metrics-server/*.yaml
+kubectl apply -f ./metrics-server
+kubectl get pods -n kube-system -w
+kubectl get --raw "/apis/metrics.k8s.io/v1beta1/nodes" | jq .
+kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq .
+
+kubectl apply -f ./custom-metrics-api
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1" | jq .
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/monitoring/pods/*/kubelet_container_log_filesystem_used_bytes" | jq .
+
+
+kubectl proxy --port 8001 &
+kubectl get ns monitoring -o json |jq '. |{kind,apiVersion,metadata}' > ns.json
+curl -k -H "Content-Type: application/json" -X PUT --data-binary @ns.json http://127.0.0.1:8001/api/v1/namespaces/monitoring/finalize
+lsof -i:8001|grep -v COMMAND|awk '{print $2}'|xargs kill -9

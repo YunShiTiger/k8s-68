@@ -1,6 +1,6 @@
-rm namespace.yaml* metallb.yaml* kube-flannel*
-wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
-wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+# rm namespace.yaml* metallb.yaml* kube-flannel*
+# wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
+# wget https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
 # kubectl delete -f metallb.yaml --force
 # kubectl delete -f config.yaml --force
 # kubectl delete -f namespace.yaml --force
@@ -28,7 +28,7 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - 192.168.33.200-192.168.33.202
+      - 10.10.10.179-10.10.10.180
 EOF
 
 kubectl get all -o wide -n metallb-system

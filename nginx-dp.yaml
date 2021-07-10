@@ -45,3 +45,14 @@ spec:
             - "/usr/bin/ping 127.0.0.1"
 # pod*5 + rs + dp
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
