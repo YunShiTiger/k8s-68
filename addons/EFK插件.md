@@ -17,10 +17,10 @@ tags: addons, EFK, fluentd, elasticsearch, kibana
 
 ``` bash
 
-# wget https://dl.k8s.io/v1.21.0/kubernetes-server-linux-amd64.tar.gz
+# wget https://dl.k8s.io/v1.20.0/kubernetes-server-linux-amd64.tar.gz
 # tar -zxf kubernetes-server-linux-amd64.tar.gz
 mkdir ./kubernetes
-wget https://dl.k8s.io/v1.21.0/kubernetes-src.tar.gz
+wget https://dl.k8s.io/v1.20.0/kubernetes-src.tar.gz
 tar -zxf kubernetes-src.tar.gz -C ./kubernetes
 cd kubernetes/cluster/addons/fluentd-elasticsearch
 sed -i -e 's_quay.io_quay.mirrors.ustc.edu.cn_' es-statefulset.yaml # 使用中科大的 Registry
@@ -39,7 +39,7 @@ kubectl -n kube-system logs -f $(kubectl get pod -n kube-system |grep kibana-log
 创建代理：
 
 ``` bash
-[root@master ~]# kubectl proxy --address='0.0.0.0' --port=8086 --accept-hosts='^*$' &
+kubectl proxy --address='0.0.0.0' --port=8086 --accept-hosts='^*$' &
 # Starting to serve on 10.10.10.223:8086
 # kubectl patch  -n kube-system  service/kibana-logging -p '{"spec":{"type":"LoadBalancer"}}'
 # kubectl patch  -n kube-system  service/kibana-logging -p '{"spec":{"type":"ClusterIP"}}'
@@ -50,8 +50,8 @@ kubectl -n kube-system logs -f $(kubectl get pod -n kube-system |grep kibana-log
 
 在 Management -> Indices 页面创建一个 index（相当于 mysql 中的一个 database），选中 `Index contains time-based events`，使用默认的 `logstash-*` pattern，点击 `Create` ;
 
-![es-setting](./images/es-setting.png)
+![es-setting](../images/es-setting.png)
 
 创建 Index 后，稍等几分钟就可以在 `Discover` 菜单下看到 ElasticSearch logging 中汇聚的日志；
 
-![es-home](./images/es-home.png)
+![es-home](../images/es-home.png)

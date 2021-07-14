@@ -49,15 +49,15 @@ sync() {
         fi
     done
 }
-# sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
-# sync 'k8s.gcr.io/ingress-nginx/controller'
-# sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
-# sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
-# sync 'k8s.gcr.io/sig-storage/csi-attacher'
-# sync 'k8s.gcr.io/sig-storage/hostpathplugin'
-# sync 'k8s.gcr.io/sig-storage/livenessprobe'
-# sync 'k8s.gcr.io/sig-storage/csi-provisioner'
-# sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
+sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
+sync 'k8s.gcr.io/ingress-nginx/controller'
+sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
+sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
+sync 'k8s.gcr.io/sig-storage/csi-attacher'
+sync 'k8s.gcr.io/sig-storage/hostpathplugin'
+sync 'k8s.gcr.io/sig-storage/livenessprobe'
+sync 'k8s.gcr.io/sig-storage/csi-provisioner'
+sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
 sync 'k8s.gcr.io/metrics-server-amd64'
 
 EOF
