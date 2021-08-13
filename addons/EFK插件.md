@@ -17,10 +17,10 @@ tags: addons, EFK, fluentd, elasticsearch, kibana
 
 ``` bash
 
-# wget https://dl.k8s.io/v1.20.0/kubernetes-server-linux-amd64.tar.gz
+# wget https://dl.k8s.io/v1.21.0/kubernetes-server-linux-amd64.tar.gz
 # tar -zxf kubernetes-server-linux-amd64.tar.gz
 mkdir ./kubernetes
-wget https://dl.k8s.io/v1.20.0/kubernetes-src.tar.gz
+wget https://dl.k8s.io/v1.21.0/kubernetes-src.tar.gz
 tar -zxf kubernetes-src.tar.gz -C ./kubernetes
 cd kubernetes/cluster/addons/fluentd-elasticsearch
 sed -i -e 's_quay.io_quay.mirrors.ustc.edu.cn_' es-statefulset.yaml # 使用中科大的 Registry

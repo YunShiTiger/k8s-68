@@ -34,7 +34,7 @@ kubectl apply -f manifests/ # 安装 promethes metric adapter
 kubectl get pods -n monitoring
 kubectl top pods -n monitoring
 # kubectl logs pod/prometheus-k8s-0 -c prometheus -n monitoring
-kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9090
+kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9090 &
 
 ```
 + port-forward 依赖 socat。
@@ -49,7 +49,7 @@ kubectl port-forward --address 0.0.0.0 pod/prometheus-k8s-0 -n monitoring 9090:9
 启动代理：
 
 ``` bash
-$ kubectl port-forward --address 0.0.0.0 svc/grafana -n monitoring 3000:3000
+kubectl port-forward --address 0.0.0.0 svc/grafana -n monitoring 3000:3000
 Forwarding from 0.0.0.0:3000 -> 3000
 ```
 kubectl patch  -n monitoring  svc/grafana -p '{"spec":{"type":"LoadBalancer"}}'
@@ -63,25 +63,5 @@ https://grafana.com/grafana/dashboards?search=kubernetes
 
 
 
-
-
-
-
-git clone https://github.com/stefanprodan/k8s-prom-hpa
-cd k8s-prom-hpa
-kubectl apply -f namespaces.yaml
-sed -i -e 's_k8s.gcr.io/metrics-server-amd64:_acejilam/metrics-server-amd64:_' ./metrics-server/*.yaml
-kubectl apply -f ./metrics-server
-kubectl get pods -n kube-system -w
-kubectl get --raw "/apis/metrics.k8s.io/v1beta1/nodes" | jq .
-kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq .
-
-kubectl apply -f ./custom-metrics-api
-kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1" | jq .
-kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/monitoring/pods/*/kubelet_container_log_filesystem_used_bytes" | jq .
-
-
-kubectl proxy --port 8001 &
-kubectl get ns monitoring -o json |jq '. |{kind,apiVersion,metadata}' > ns.json
-curl -k -H "Content-Type: application/json" -X PUT --data-binary @ns.json http://127.0.0.1:8001/api/v1/namespaces/monitoring/finalize
-lsof -i:8001|grep -v COMMAND|awk '{print $2}'|xargs kill -9
+kubectl patch svc/grafana -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl patch svc/prometheus-k8s -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'

@@ -59,6 +59,7 @@ sync 'k8s.gcr.io/sig-storage/livenessprobe'
 sync 'k8s.gcr.io/sig-storage/csi-provisioner'
 sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
 sync 'k8s.gcr.io/metrics-server-amd64'
+sync 'k8s.gcr.io/fluentd-gcp'
 
 EOF
 chmod +x sync_image.sh
