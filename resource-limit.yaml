@@ -12,11 +12,11 @@ spec:
       containers:
         - name: redis
           image: redis:6.2.6
-  #          resources:
-  #            limits:
-  #              memory: "1.5Gi"
-  #            requests:
-  #              memory: "800Mi"
+#          resources:
+#            limits:
+#              memory: "1.5Gi"
+#            requests:
+#              memory: "800Mi"
   selector:
     matchLabels:
       app: redis
@@ -42,7 +42,6 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: object-counts
-  namespace: default
 spec:
   hard:
     configmaps: "10"
@@ -54,7 +53,6 @@ spec:
     services.loadbalancers: "2"
 
 ---
-# 默认值,一般不用;但经常用来控制资源上限
 apiVersion: v1
 kind: LimitRange
 metadata:
@@ -62,19 +60,8 @@ metadata:
 spec:
   limits:
     - type: Container
-      maxLimitRequestRatio:
-        cpu: 3
-        memory: 2
       default:
-        cpu: 300m
-        memory: 200Mi
+        memory: 512Mi
       defaultRequest:
-        cpu: 200m
-        memory: 100Mi
-      max:
-        cpu: "2"
-        memory: 1Gi
-      min:
-        cpu: 100m
-        memory: 3Mi
+        memory: 256Mi
 #资源生效位置，本名称空间内
