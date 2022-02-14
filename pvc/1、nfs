@@ -1,14 +1,16 @@
 # store1
 yum install nfs-utils -y
 rm -rf /data/volumes
-mkdir -p /data/volumes/v{1,2,3,4,5}
+mkdir -p /data/volumes/v{1,2,3,4,5,6,7}
 chown -R 1001:1001 /data/volumes/
 echo -e '
-/data/volumes/v1    192.168.0.0/16(rw)
-/data/volumes/v2    192.168.0.0/16(rw)
-/data/volumes/v3    192.168.0.0/16(rw)
-/data/volumes/v4    192.168.0.0/16(rw)
-/data/volumes/v5    192.168.0.0/16(rw)
+/data/volumes/v1    10.10.0.0/16(rw)
+/data/volumes/v2    10.10.0.0/16(rw)
+/data/volumes/v3    10.10.0.0/16(rw)
+/data/volumes/v4    10.10.0.0/16(rw)
+/data/volumes/v5    10.10.0.0/16(rw)
+/data/volumes/v6    10.10.0.0/16(rw)
+/data/volumes/v7    10.10.0.0/16(rw)
 '> /etc/exports
 exportfs -arv
 
