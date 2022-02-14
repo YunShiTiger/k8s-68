@@ -46,7 +46,7 @@ kubectl proxy --address='0.0.0.0' --port=8086 --accept-hosts='^*$' &
 ```
 <!-- kubectl get svc -n kube-system |grep -v TYPE|grep kibana-logging|awk '{print $3}' -->
 
-浏览器访问 URL：`http://10.10.10.223:8086/api/v1/namespaces/kube-system/services/kibana-logging/proxy`
+浏览器访问 URL：`http://10.10.10.121:8086/api/v1/namespaces/kube-system/services/kibana-logging/proxy`
 
 在 Management -> Indices 页面创建一个 index（相当于 mysql 中的一个 database），选中 `Index contains time-based events`，使用默认的 `logstash-*` pattern，点击 `Create` ;
 
