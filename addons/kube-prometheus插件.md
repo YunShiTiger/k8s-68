@@ -18,27 +18,15 @@ kube-prometheus 是一整套监控解决方案，它使用 Prometheus 采集集�
 ``` bash
 # 每台机器
 yum install ntpdate -y;ntpdate time1.aliyun.com
-git clone https://github.com/coreos/kube-prometheus.git -b v0.9.0
+git clone https://github.com/coreos/kube-prometheus.git -b v0.8.0
 cd kube-prometheus/
-git checkout v0.9.0
 # 使用科大的 Registry
 sed -i 's_quay.io_quay.mirrors.ustc.edu.cn_' manifests/*.yaml manifests/setup/*.yaml
 sed -i -e 's_k8s.gcr.io/kube-state-metrics/kube-state-metrics:_acejilam/kube-state-metrics:_' manifests/*.yaml manifests/setup/*.yaml
 sed -i -e 's_k8s.gcr.io/prometheus-adapter/prometheus-adapter:_acejilam/prometheus-adapter:_' manifests/*.yaml manifests/setup/*.yaml
 # k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.9.0
-
 kubectl apply -f manifests/setup # 安装 prometheus-operator
 kubectl apply -f manifests/ # 安装 promethes metric adapter
-# 增大权限
-kubectl patch clusterrole prometheus-k8s -p '{"rules":[{"apiGroups":[""],"resources":["nodes/metrics","endpoints","pods","services"],"verbs":["get","list","watch"]},{"nonResourceURLs":["/metrics"],"verbs":["get"]}]}'
-# 如果还采集不到指标，将monitoring下所有pod删除,只删pod
-# kubectl -n monitoring logs -f service/prometheus-k8s -c prometheus
-
-
-```
-```
-kubectl delete -f manifests/ # 安装 promethes metric adapter
-kubectl delete -f manifests/setup # 安装 prometheus-operator
 ```
 
 ## 查看运行状态
