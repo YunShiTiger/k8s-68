@@ -12,11 +12,11 @@ spec:
       containers:
         - name: redis
           image: redis:6.2.6
-#          resources:
-#            limits:
-#              memory: "1.5Gi"
-#            requests:
-#              memory: "800Mi"
+  #          resources:
+  #            limits:
+  #              memory: "1.5Gi"
+  #            requests:
+  #              memory: "800Mi"
   selector:
     matchLabels:
       app: redis
@@ -62,8 +62,19 @@ metadata:
 spec:
   limits:
     - type: Container
+      maxLimitRequestRatio:
+        cpu: 3
+        memory: 2
       default:
-        memory: 512Mi
+        cpu: 300m
+        memory: 200Mi
       defaultRequest:
-        memory: 256Mi
+        cpu: 200m
+        memory: 100Mi
+      max:
+        cpu: "2"
+        memory: 1Gi
+      min:
+        cpu: 100m
+        memory: 3Mi
 #资源生效位置，本名称空间内
