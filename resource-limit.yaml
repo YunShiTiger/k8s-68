@@ -54,6 +54,7 @@ spec:
     services.loadbalancers: "2"
 
 ---
+# 默认值,一般不用;但经常用来控制资源上限
 apiVersion: v1
 kind: LimitRange
 metadata:
