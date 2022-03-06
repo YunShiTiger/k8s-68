@@ -1,6 +1,6 @@
 #!/bin/bash
 cat >sync_image.sh <<\EOF
-set -x xtrace
+#set -x xtrace
 #export PS4='[Line:${LINENO}] '
 sync() {
   address=$1
@@ -86,7 +86,6 @@ sync 'k8s.gcr.io/metrics-server-amd64'
 sync 'k8s.gcr.io/fluentd-gcp'
 sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
 sync 'k8s.gcr.io/sig-storage/csi-resizer'
-sync 'quay.io/cephcsi/cephcsi'
 EOF
 chmod +x sync_image.sh
 bash sync_image.sh
