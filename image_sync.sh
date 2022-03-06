@@ -1,34 +1,76 @@
 #!/bin/bash
 cat >sync_image.sh <<\EOF
-#set -x xtrace
+set -x xtrace
 #export PS4='[Line:${LINENO}] '
 sync() {
   address=$1
-  # shellcheck disable=SC2206
   arr=(${address//\// })
   Repo=${arr[${#arr[@]} - 1]}
-  echo $Repo1
-  echo gcloud container images list-tags $address
+  curl -o ~/res.txt -s https://hub.docker.com/v2/repositories/acejilam/$Repo/tags/?page_size=1000
+  curl -o ~/res.txt -s https://hub.docker.com/v2/repositories/acejilam/controller/tags/?page_size=1000
+  page=1
+  res=$(echo "$(cat ~/res.txt | jq -r '.results[].name')")
 
-  address=k8s.gcr.io/kube-state-metrics/kube-state-metrics
+  OLD_IFS="$IFS"
+  IFS=" "
+  arr=($res)
+  IFS="$OLD_IFS"
+  len=0
+  for s in ${arr[@]}; do
+    ((len++))
+  done
+
+  a=0
   for tag in $(gcloud container images list-tags $address); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
       continue
     else
-
       if [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]]; then
         continue
       else
-        echo -e "\033[34mpulling  $address:$tag\033[0m"
-        docker pull $address:$tag
-        docker tag $address:$tag acejilam/$Repo:$tag
-        docker push acejilam/$Repo:$tag
-        echo -e "\033[32msync  acejilam/$Repo:$tag\033[0m"
-        docker rmi acejilam/$Repo:$tag
-        docker rmi $address:$tag
+        ((a++))
       fi
     fi
+  done
 
+  for tag in $(gcloud container images list-tags $address); do
+    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
+      continue
+    else
+      if [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]]; then
+        continue
+      else
+        ((a++))
+        if [[ "$tag" =~ .*?,.*?$ ]]; then
+          continue
+        fi
+        # 判断镜像是否存在
+        flag=false
+        for item in $res; do
+          if [ "$item" == "$tag" ]; then
+            echo -e "\033[32m存在  acejilam/$Repo:$tag\033[0m"
+            flag=true
+            break
+          fi
+        done
+        if [ "$tag" == "latest" ]; then
+          flag=false
+        fi
+
+        if $flag; then
+          echo $len ' ------->' 存在 $Repo:$tag
+          continue
+        else
+          echo -e "\033[34mpulling  $address:$tag\033[0m"
+          docker pull $address:$tag
+          docker tag $address:$tag acejilam/$Repo:$tag
+          docker push acejilam/$Repo:$tag
+          echo -e "\033[32msync  acejilam/$Repo:$tag\033[0m"
+          docker rmi acejilam/$Repo:$tag
+          docker rmi $address:$tag
+        fi
+      fi
+    fi
   done
 }
 sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
@@ -44,6 +86,7 @@ sync 'k8s.gcr.io/metrics-server-amd64'
 sync 'k8s.gcr.io/fluentd-gcp'
 sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
 sync 'k8s.gcr.io/sig-storage/csi-resizer'
+sync 'quay.io/cephcsi/cephcsi'
 EOF
 chmod +x sync_image.sh
 bash sync_image.sh
