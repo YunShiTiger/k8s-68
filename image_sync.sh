@@ -60,7 +60,8 @@ sync 'k8s.gcr.io/sig-storage/csi-provisioner'
 sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
 sync 'k8s.gcr.io/metrics-server-amd64'
 sync 'k8s.gcr.io/fluentd-gcp'
-
+sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
+sync 'k8s.gcr.io/sig-storage/csi-resizer'
 EOF
 chmod +x sync_image.sh
 ./sync_image.sh
