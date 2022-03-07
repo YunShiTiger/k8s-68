@@ -1,20 +1,31 @@
 #!/bin/bash
 cat >sync_image.sh <<\EOF
-docker login -u acejilam
-
 #set -x xtrace
 #export PS4='[Line:${LINENO}] '
+
+get_all_tag() {
+  url=$1
+  curl -o ~/res.txt -s $url
+  tags=$(echo "$(cat ~/res.txt | jq -r '.results[].name')")
+  next=$(echo "$(cat ~/res.txt | jq -r '.next')")
+  while [[ $next != null ]]; do
+    curl -o ~/res.txt -s $next
+    tmp_tags=$(echo "$(cat ~/res.txt | jq -r '.results[].name')")
+    next=$(echo "$(cat ~/res.txt | jq -r '.next')")
+    tags="$tags $tmp_tags"
+  done
+  echo $tags
+}
+
 sync() {
   address=$1
-  arr=(${address//\// })
-  Repo=${arr[${#arr[@]} - 1]}
-  curl -o ~/res.txt -s https://hub.docker.com/v2/repositories/acejilam/$Repo/tags/?page_size=1000
+  args=(${address//\// })
+  Repo=${args[${#args[@]} - 1]}
   page=1
-  res=$(echo "$(cat ~/res.txt | jq -r '.results[].name')")
-
+  all_tag=`get_all_tag https://hub.docker.com/v2/repositories/acejilam/$Repo/tags/?page_size=1000`
   OLD_IFS="$IFS"
   IFS=" "
-  arr=($res)
+  arr=($all_tag)
   IFS="$OLD_IFS"
   len=0
   for s in ${arr[@]}; do
@@ -38,11 +49,10 @@ sync() {
       fi
     fi
   done
-  echo $address [$a] 已转存 $len $arr
+  echo $address [$a] 已转存 $len $all_tag
   if [[ $a == $len ]]; then
     return
   fi
-
 
   for tag in $(gcloud container images list-tags $address); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
@@ -57,7 +67,7 @@ sync() {
         fi
         # 判断镜像是否存在
         flag=false
-        for item in $res; do
+        for item in $all_tag; do
           if [ "$item" == "$tag" ]; then
             echo -e "\033[32m存在  acejilam/$Repo:$tag\033[0m"
             flag=true
