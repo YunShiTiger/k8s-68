@@ -7,7 +7,6 @@ sync() {
   arr=(${address//\// })
   Repo=${arr[${#arr[@]} - 1]}
   curl -o ~/res.txt -s https://hub.docker.com/v2/repositories/acejilam/$Repo/tags/?page_size=1000
-  curl -o ~/res.txt -s https://hub.docker.com/v2/repositories/acejilam/controller/tags/?page_size=1000
   page=1
   res=$(echo "$(cat ~/res.txt | jq -r '.results[].name')")
 
@@ -21,6 +20,7 @@ sync() {
   done
 
   a=0
+  echo "gcloud container images list-tags $address"
   for tag in $(gcloud container images list-tags $address); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
       continue
@@ -28,10 +28,19 @@ sync() {
       if [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]]; then
         continue
       else
-        ((a++))
+        if [[ "$tag" =~ .*?,.*?$ ]]; then
+          continue
+        else
+          ((a++))
+        fi
       fi
     fi
   done
+  echo $address [$a] 已转存 $len $arr
+  if [[ $a == $len ]]; then
+    return
+  fi
+
 
   for tag in $(gcloud container images list-tags $address); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
