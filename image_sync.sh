@@ -97,6 +97,13 @@ sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
 sync 'k8s.gcr.io/sig-storage/csi-resizer'
 sync 'k8s.gcr.io/coredns'
 sync 'gcr.io/google-samples/gb-frontend'
+sync 'k8s.gcr.io/pause'
+sync 'k8s.gcr.io/kube-controller-manager'
+sync 'k8s.gcr.io/kube-scheduler '
+sync 'k8s.gcr.io/kube-proxy'
+sync 'k8s.gcr.io/kube-apiserver'
+sync 'k8s.gcr.io/etcd'
+sync 'k8s.gcr.io/coredns/coredns'
 EOF
 chmod +x sync_image.sh
 bash sync_image.sh
