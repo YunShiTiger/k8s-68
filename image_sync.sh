@@ -95,6 +95,8 @@ sync 'k8s.gcr.io/metrics-server-amd64'
 sync 'k8s.gcr.io/fluentd-gcp'
 sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
 sync 'k8s.gcr.io/sig-storage/csi-resizer'
+sync 'k8s.gcr.io/coredns'
+sync 'gcr.io/google-samples/gb-frontend'
 EOF
 chmod +x sync_image.sh
 bash sync_image.sh
