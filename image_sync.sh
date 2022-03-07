@@ -49,7 +49,8 @@ sync() {
       fi
     fi
   done
-  echo $address [$a] 已转存 $len $all_tag
+  echo "$address [$a] 已转存 $len"
+  echo $all_tag
   if [[ $a == $len ]]; then
     return
   fi
