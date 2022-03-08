@@ -33,18 +33,18 @@ sync() {
     ((len++))
   done
 
-  a=0
+  total=0
   echo "gcloud container images list-tags $address"
   for tag in $(gcloud container images list-tags $address | xargs -n 1 |grep -v -E 'DIGEST|TAGS|TIMESTAMP'); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
       continue
     else
-      ((a++))
+      ((total++))
     fi
   done
-  echo "$address [$a] 已转存 $len"
+  echo "$address [$total] 已转存 $len"
   echo $all_tag
-  if [[ $a == $len ]]; then
+  if [[ $total == $len ]]; then
     return
   fi
 
@@ -64,18 +64,17 @@ sync() {
       if [ "$tag" == "latest" ]; then
         flag=false
       fi
-
       if $flag; then
-        echo $len ' ------->' 存在 $Repo:$tag
         continue
       else
-        echo '===>' $tag
         address=$(echo $address)
         echo -e "\033[34mpulling  $address:$tag\033[0m"
         docker pull $address:$tag
         docker tag $address:$tag acejilam/$Repo:$tag
         docker push acejilam/$Repo:$tag
-        echo -e "\033[32msync  acejilam/$Repo:$tag\033[0m"
+        ((len++))
+        ((lest=total-len))
+        echo -e "\033[32m $lest sync  acejilam/$Repo:$tag\033[0m"
         docker rmi acejilam/$Repo:$tag
         docker rmi $address:$tag
       fi
