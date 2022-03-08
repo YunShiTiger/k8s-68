@@ -31,6 +31,7 @@ sync() {
     ((len++))
   done
   echo "gcloud container images list-tags $address"
+  gcloud container images list-tags $address
   for tag in $(gcloud container images list-tags $address); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
       continue
@@ -41,6 +42,7 @@ sync() {
         if [[ "$tag" =~ .*?,.*?$ ]]; then
           continue
         else
+          echo $tag
           ((a++))
         fi
       fi
