@@ -1,3 +1,6 @@
+set -x xtrace
+export PS4='[Line:${LINENO}] '
+
 get_all_tag() {
   url=$1
   curl -o ~/res.txt -s $url
