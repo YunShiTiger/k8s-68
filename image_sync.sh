@@ -32,20 +32,12 @@ sync() {
   done
   echo "gcloud container images list-tags $address"
   gcloud container images list-tags $address
-  for tag in $(gcloud container images list-tags $address); do
-    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
+  for tag in $(gcloud container images list-tags $address| xargs -n 1 ); do
+    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~[0-9:-T]{19}$ ]]  || [[ "$tag" =~ .*?,.*?$ ]]; then
       continue
     else
-      if [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]]; then
-        continue
-      else
-        if [[ "$tag" =~ .*?,.*?$ ]]; then
-          continue
-        else
-          echo $tag
-          ((a++))
-        fi
-      fi
+      echo $tag
+      ((a++))
     fi
   done
   echo "$address [$a] 已转存 $len"
