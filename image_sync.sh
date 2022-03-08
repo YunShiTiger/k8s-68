@@ -1,5 +1,4 @@
 #!/bin/bash
-docker login -uacejilam -p$1
 cat >sync_image.sh <<\EOF
 #set -x xtrace
 #export PS4='[Line:${LINENO}] '
@@ -84,6 +83,7 @@ sync() {
           echo $len ' ------->' 存在 $Repo:$tag
           continue
         else
+        echo '===>' $tag
           address=`echo $address`
           echo -e "\033[34mpulling  $address:$tag\033[0m"
           docker pull $address:$tag
