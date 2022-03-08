@@ -1,4 +1,5 @@
 #!/bin/bash
+docker login -uacejilam -p$1
 cat >sync_image.sh <<\EOF
 #set -x xtrace
 #export PS4='[Line:${LINENO}] '
