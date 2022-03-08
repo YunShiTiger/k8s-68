@@ -26,7 +26,7 @@ sync() {
   for s in ${arr[@]}; do
     ((len++))
   done
-
+  echo $all_tag
   a=0
   echo "gcloud container images list-tags $address"
   for tag in $(gcloud container images list-tags $address); do
