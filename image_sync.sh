@@ -22,8 +22,31 @@ sync() {
   page=1
   all_tag=$(get_all_tag https://hub.docker.com/v2/repositories/acejilam/$Repo/tags/?page_size=1000)
   echo $all_tag
-
-  gcloud container images list-tags
+  OLD_IFS="$IFS"
+  IFS=" "
+  arr=($all_tag)
+  IFS="$OLD_IFS"
+  len=0
+  for s in ${arr[@]}; do
+    ((len++))
+  done
+  echo "gcloud container images list-tags $address"
+  for tag in $(gcloud container images list-tags $address); do
+    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]]; then
+      continue
+    else
+      if [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]]; then
+        continue
+      else
+        if [[ "$tag" =~ .*?,.*?$ ]]; then
+          continue
+        else
+          ((a++))
+        fi
+      fi
+    fi
+  done
+  echo "$address [$a] 已转存 $len"
 }
 sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
 #sync 'k8s.gcr.io/ingress-nginx/controller'
