@@ -1,5 +1,5 @@
 #!/bin/bash
-#cat >sync_image.sh <<\EOF
+cat >sync_image.sh <<\EOF
 #set -x xtrace
 #export PS4='[Line:${LINENO}] '
 
@@ -38,7 +38,6 @@ sync() {
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
       continue
     else
-      echo $tag
       ((a++))
     fi
   done
@@ -104,6 +103,6 @@ sync 'k8s.gcr.io/kube-proxy'
 sync 'k8s.gcr.io/kube-apiserver'
 sync 'k8s.gcr.io/etcd'
 sync 'k8s.gcr.io/coredns/coredns'
-#EOF
-#chmod +x sync_image.sh
-#bash sync_image.sh
+EOF
+chmod +x sync_image.sh
+bash sync_image.sh
