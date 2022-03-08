@@ -34,7 +34,7 @@ sync() {
 
   a=0
   echo "gcloud container images list-tags $address"
-  for tag in $(gcloud container images list-tags $address | xargs -n 1); do
+  for tag in $(gcloud container images list-tags $address | xargs -n 1 |grep -v -E 'DIGEST|TAGS|TIMESTAMP'); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
       continue
     else
@@ -48,7 +48,7 @@ sync() {
     return
   fi
 
-  for tag in $(gcloud container images list-tags $address); do
+  for tag in $(gcloud container images list-tags $address | xargs -n 1 |grep -v -E 'DIGEST|TAGS|TIMESTAMP'); do
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
       continue
     else
@@ -83,27 +83,27 @@ sync() {
   done
 }
 sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
-#sync 'k8s.gcr.io/ingress-nginx/controller'
-#sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
-#sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
-#sync 'k8s.gcr.io/sig-storage/csi-attacher'
-#sync 'k8s.gcr.io/sig-storage/hostpathplugin'
-#sync 'k8s.gcr.io/sig-storage/livenessprobe'
-#sync 'k8s.gcr.io/sig-storage/csi-provisioner'
-#sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
-#sync 'k8s.gcr.io/metrics-server-amd64'
-#sync 'k8s.gcr.io/fluentd-gcp'
-#sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
-#sync 'k8s.gcr.io/sig-storage/csi-resizer'
-#sync 'k8s.gcr.io/coredns'
-#sync 'gcr.io/google-samples/gb-frontend'
-#sync 'k8s.gcr.io/pause'
-#sync 'k8s.gcr.io/kube-controller-manager'
-#sync 'k8s.gcr.io/kube-scheduler '
-#sync 'k8s.gcr.io/kube-proxy'
-#sync 'k8s.gcr.io/kube-apiserver'
-#sync 'k8s.gcr.io/etcd'
-#sync 'k8s.gcr.io/coredns/coredns'
+sync 'k8s.gcr.io/ingress-nginx/controller'
+sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
+sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
+sync 'k8s.gcr.io/sig-storage/csi-attacher'
+sync 'k8s.gcr.io/sig-storage/hostpathplugin'
+sync 'k8s.gcr.io/sig-storage/livenessprobe'
+sync 'k8s.gcr.io/sig-storage/csi-provisioner'
+sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
+sync 'k8s.gcr.io/metrics-server-amd64'
+sync 'k8s.gcr.io/fluentd-gcp'
+sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
+sync 'k8s.gcr.io/sig-storage/csi-resizer'
+sync 'k8s.gcr.io/coredns'
+sync 'gcr.io/google-samples/gb-frontend'
+sync 'k8s.gcr.io/pause'
+sync 'k8s.gcr.io/kube-controller-manager'
+sync 'k8s.gcr.io/kube-scheduler '
+sync 'k8s.gcr.io/kube-proxy'
+sync 'k8s.gcr.io/kube-apiserver'
+sync 'k8s.gcr.io/etcd'
+sync 'k8s.gcr.io/coredns/coredns'
 #EOF
 #chmod +x sync_image.sh
 #bash sync_image.sh
