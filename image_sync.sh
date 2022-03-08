@@ -1,6 +1,6 @@
 #!/bin/bash
-docker login -uacejilam -p$1
-cat >sync_image.sh <<\EOF
+#docker login -uacejilam -p$1
+#cat >sync_image.sh <<\EOF
 #set -x xtrace
 #export PS4='[Line:${LINENO}] '
 
@@ -81,28 +81,29 @@ sync() {
     fi
   done
 }
-sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
-sync 'k8s.gcr.io/ingress-nginx/controller'
-sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
-sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
-sync 'k8s.gcr.io/sig-storage/csi-attacher'
-sync 'k8s.gcr.io/sig-storage/hostpathplugin'
-sync 'k8s.gcr.io/sig-storage/livenessprobe'
-sync 'k8s.gcr.io/sig-storage/csi-provisioner'
-sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
-sync 'k8s.gcr.io/metrics-server-amd64'
-sync 'k8s.gcr.io/fluentd-gcp'
-sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
-sync 'k8s.gcr.io/sig-storage/csi-resizer'
-sync 'k8s.gcr.io/coredns'
-sync 'gcr.io/google-samples/gb-frontend'
-sync 'k8s.gcr.io/pause'
-sync 'k8s.gcr.io/kube-controller-manager'
-sync 'k8s.gcr.io/kube-scheduler '
-sync 'k8s.gcr.io/kube-proxy'
-sync 'k8s.gcr.io/kube-apiserver'
-sync 'k8s.gcr.io/etcd'
-sync 'k8s.gcr.io/coredns/coredns'
-EOF
-chmod +x sync_image.sh
-bash sync_image.sh
+#sync 'k8s.gcr.io/kube-state-metrics/kube-state-metrics'
+#sync 'k8s.gcr.io/ingress-nginx/controller'
+#sync 'k8s.gcr.io/networking/ip-masq-agent-amd64'
+#sync 'k8s.gcr.io/sig-storage/csi-snapshotter'
+#sync 'k8s.gcr.io/sig-storage/csi-attacher'
+#sync 'k8s.gcr.io/sig-storage/hostpathplugin'
+#sync 'k8s.gcr.io/sig-storage/livenessprobe'
+#sync 'k8s.gcr.io/sig-storage/csi-provisioner'
+#sync 'k8s.gcr.io/node-problem-detector/node-problem-detector'
+#sync 'k8s.gcr.io/metrics-server-amd64'
+#sync 'k8s.gcr.io/fluentd-gcp'
+#sync 'k8s.gcr.io/sig-storage/csi-node-driver-registrar'
+#sync 'k8s.gcr.io/sig-storage/csi-resizer'
+#sync 'k8s.gcr.io/coredns'
+#sync 'gcr.io/google-samples/gb-frontend'
+#sync 'k8s.gcr.io/pause'
+#sync 'k8s.gcr.io/kube-controller-manager'
+#sync 'k8s.gcr.io/kube-scheduler '
+#sync 'k8s.gcr.io/kube-proxy'
+#sync 'k8s.gcr.io/kube-apiserver'
+#sync 'k8s.gcr.io/etcd'
+#sync 'k8s.gcr.io/coredns/coredns'
+#EOF
+#chmod +x sync_image.sh
+#bash sync_image.sh
+sync $1
