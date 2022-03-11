@@ -18,6 +18,7 @@ kube-prometheus 是一整套监控解决方案，它使用 Prometheus 采集集�
 ``` bash
 # 每台机器
 yum install ntpdate -y;ntpdate time1.aliyun.com
+# 适用 k8s 1.21 1.22
 git clone https://github.com/coreos/kube-prometheus.git -b v0.9.0
 cd kube-prometheus/
 git checkout v0.9.0
