@@ -37,6 +37,7 @@ sync() {
     if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
       continue
     else
+      echo "<-------: $tag"  
       ((total++))
     fi
   done
