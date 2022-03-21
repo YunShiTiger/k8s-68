@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 get_all_tag() {
   url=$1
   curl -o ~/res.txt -s $url
@@ -16,8 +15,9 @@ get_all_tag() {
 }
 
 sync() {
-  address=$1
-  Pre=$2
+  xxx=(${1//,/ })
+  address=${xxx[0]}
+  Pre=${xxx[1]}
   args=(${address//\// })
   Repo=${args[${#args[@]} - 1]}
   page=1
@@ -105,4 +105,4 @@ sync() {
 #EOF
 #chmod +x sync_image.sh
 #bash sync_image.sh
-sync $1 $2
+sync $1
