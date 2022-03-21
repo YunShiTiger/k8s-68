@@ -34,7 +34,7 @@ sync() {
   total=0
   echo "gcloud container images list-tags $address"
   for tag in $(gcloud container images list-tags $address | xargs -n 1 | grep -v -E 'DIGEST|TAGS|TIMESTAMP'); do
-    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]]; then
+    if [[ "$tag" == "TAGS:" ]] || [[ "$tag" == "DIGEST:" ]] || [[ "$tag" =~ [0-9a-zA-Z]{12}$ ]] || [[ "$tag" =~ [0-9T:\-]{19}$ ]] || [[ "$tag" =~ , ]] || || [[ "$tag" =~ - ]]; then
       continue
     else
       echo "<-------: $tag"  
