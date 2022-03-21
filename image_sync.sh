@@ -41,8 +41,10 @@ sync() {
 		else
             per_tags=(${tag//,/ })
 			for per_tag in ${per_tags[@]}; do
-			    echo "<-------: $per_tag"
-			    ((total++))
+            	if [ "$per_tag" != "latest" ]; then
+                    echo "<-------: $per_tag"
+                    ((total++))
+				fi
             done
 		fi
 	done
