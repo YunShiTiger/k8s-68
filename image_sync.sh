@@ -1,3 +1,6 @@
+
+
+
 #!/bin/bash
 
 #set -x xtrace
@@ -17,10 +20,12 @@ get_docker_all_tag() {
   echo $tags
 }
 
+
+
 get_quay_all_tag() {
   address=$1
   quay_address=${address/quay.io\//}
-  page=1
+      page=1
   len="100"
   tags=""
   while [[ $len -eq 100 ]]; do
@@ -100,6 +105,69 @@ gcr() {
   done
 }
 
+ghcr() {
+
+  address=$1
+  Pre=$2
+  docker_all_tags=$3
+  docker_exists_count=$4
+  echo $address
+  echo $Pre
+  echo $docker_all_tags
+  echo $docker_exists_count
+
+  repo=${address#*ghcr.io/}
+
+  curl -o 1.txt https://ghcr.io/token\?scope\="repository:$repo:pull"
+  token=$(cat 1.txt |jq -r .token)
+
+  curl -o res.txt -H "Authorization: Bearer $token" https://ghcr.io/v2/$repo/tags/list
+  ghcr_all_tags=`cat res.txt|jq -r .tags[]`
+  echo ghcr_all_tags
+  total=0
+  ghcr_all_tags=(${ghcr_all_tags// / })
+  docker_all_tags=(${docker_all_tags// / })
+  for quay_tag in ${ghcr_all_tags[@]}; do
+    quay_tag=$(echo $quay_tag | sed 's/ //g') # 去掉空格
+    if [ "$quay_tag" != "latest" ]; then
+      echo "<-------: $quay_tag"
+      ((total++))
+    fi
+  done
+  echo "$address [$total] quay已转存 $docker_exists_count"
+  for quay_tag in ${ghcr_all_tags[@]}; do
+    quay_tag=$(echo $quay_tag | sed 's/ //g') # 去掉空格
+
+    # 判断镜像是否存在
+    flag=false
+    for item in $docker_all_tags; do
+      if [ "$item" == "$quay_tag" ]; then
+        echo -e "\033[32m存在  acejilam/$Pre$Repo:$quay_tag\033[0m"
+        flag=true
+        break
+      fi
+    done
+    if [ "$quay_tag" == "latest" ]; then
+      flag=false
+    fi
+    if $flag; then
+      continue
+    else
+      address=$(echo $address)
+      echo -e "\033[34m pulling  $address:$quay_tag\033[0m"
+      docker pull $address:$quay_tag
+      docker tag $address:$quay_tag acejilam/$Pre$Repo:$quay_tag
+      docker push acejilam/$Pre$Repo:$quay_tag
+      ((docker_exists_count++))
+      ((lest = total - docker_exists_count))
+      echo -e "\033[32m $lest sync  acejilam/$Pre$Repo:$quay_tag\033[0m"
+      docker rmi acejilam/$Pre$Repo:$quay_tag
+      docker rmi $address:$quay_tag
+    fi
+  done
+
+}
+
 quay() {
   address=$1
   Pre=$2
@@ -147,9 +215,7 @@ quay() {
       docker rmi acejilam/$Pre$Repo:$quay_tag
       docker rmi $address:$quay_tag
     fi
-
   done
-
 }
 
 sync() {
@@ -177,6 +243,10 @@ sync() {
     echo "包含quay.io"
     quay "$address" "$Pre" "$docker_all_tags" "$docker_exists_count"
     ;;
+  *"ghcr.io"*)
+      echo "包含ghcr.io"
+      ghcr "$address" "$Pre" "$docker_all_tags" "$docker_exists_count"
+      ;;
   *"gcr.io"*)
     echo "包含gcr.io"
     gcr "$address" "$Pre" "$docker_all_tags" "$docker_exists_count"
@@ -213,8 +283,9 @@ sync() {
 #bash sync_image.sh
 
 sync $1
-#sync gcr.io/google-containers/cadvisor,google-
+#sync ghcr.io/dexidp/dex,argocd-
 
 #sync gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard,tekton-
 
 #sync quay.io/jetstack/cert-manager-controller,jetstack-
+
