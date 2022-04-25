@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd-browser
+  labels:
+    app: etcd-browser
+spec:
+  containers:
+    - name: etcd-browser
+      image: acejilam/etcdkeeper
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+        - mountPath: /etcd
+          name: etcd
+  nodeName: k8s-master01
+  volumes:
+    - name: etcd
+      hostPath:
+        path: /etc/kubernetes/pki/etcd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-browser
+spec:
+  selector:
+    app: etcd-browser
+  type: NodePort
+  ports:
+    - port: 30060
+      nodePort: 30060
+      targetPort: 8080
