@@ -10,7 +10,7 @@ spec:
     - name: myregistrykey
   containers:
     - name: log-gen
-      image: harbor.vackbot.com/liexing/log-gen:v1
+      image: harbor.ls.com/lie/log-gen:v1
       volumeMounts:
         - mountPath: /app/log
           name: log
