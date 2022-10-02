@@ -48,11 +48,11 @@ cp elasticsearch/values.yaml ./values-test.yaml
 # 安装 ElasticSearch Master 节点
 helm -n test-middleware install elasticsearch-master -f es-master-values.yaml --version 7.16.3 elastic/elasticsearch
 
-# 安装 ElasticSearch Data 节点
-helm -n test-middleware install elasticsearch-data -f es-data-values.yaml --version 7.16.3 elastic/elasticsearch
-
 # 安装 ElasticSearch Client 节点
 helm -n test-middleware install elasticsearch-client -f es-client-values.yaml --version 7.16.3 elastic/elasticsearch
+
+# 安装 ElasticSearch Data 节点
+helm -n test-middleware install elasticsearch-data -f es-data-values.yaml --version 7.16.3 elastic/elasticsearch
 
 # 安装 kibana 节点
 helm -n test-middleware install kibana -f es-kibana-values.yaml --version 7.16.3 elastic/kibana
@@ -61,9 +61,9 @@ kubectl get pods --namespace=test-middleware -l app=elasticsearch-master -w
 # helm test elasticsearch-master --cleanup
 
 helm uninstall -n test-middleware kibana
-helm uninstall -n test-middleware elasticsearch-client
-helm uninstall -n test-middleware elasticsearch-data
 helm uninstall -n test-middleware elasticsearch-master
+helm uninstall -n test-middleware elasticsearch-data
+helm uninstall -n test-middleware elasticsearch-client
 
 #http://k8s-worker-1:30601
 #elastic/admin@123

@@ -1,7 +1,7 @@
 # ============镜像配置============
 ## 指定镜像与镜像版本
-image: "docker.elastic.co/kibana/kibana"
-imageTag: "7.7.1"
+image: "kibana"
+imageTag: "7.16.3"
 
 ## 配置 ElasticSearch 地址
 elasticsearchHosts: "http://elasticsearch-client:9200"
