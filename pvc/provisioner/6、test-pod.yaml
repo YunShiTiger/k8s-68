@@ -1,22 +1,30 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  namespace: nfs
   name: test-pod
 spec:
   containers:
     - name: test-pod
-      image: busybox:latest
+      image: centos:7
       command:
-        - "/bin/sh"
-      args:
-        - "-c"
-        - "touch /mnt/SUCCESS && exit 0 || exit 1" #创建一个名称为"SUCCESS"的文件
+        - sleep
+        - "36000"
       volumeMounts:
-        - name: nfs-pvc
+        - name: test-pod
           mountPath: "/mnt"
-  restartPolicy: "Never"
   volumes:
-    - name: nfs-pvc
+    - name: test-pod
       persistentVolumeClaim:
-        claimName: test-pvc
+        claimName: test-pod
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-pod
+spec:
+  storageClassName: nfs-storage #---需要与上面创建的storageclass的名称一致
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
