@@ -8,15 +8,18 @@ roles:
   master: "true"
   ingest: "true"
   data: "data"
+  remote_cluster_client: "true"
+  ml: "true"
 
 # ============镜像配置============
 ## 指定镜像与镜像版本
 image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "7.7.1"
+imageTag: "7.16.3"
+imagePullPolicy: "IfNotPresent"
 
 ## 副本数
 replicas: 3
-minimumMasterNodes: 1
+minimumMasterNodes: 2
 clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
 # ============资源配置============
@@ -33,6 +36,7 @@ resources:
 ## 数据持久卷配置
 persistence:
   enabled: true
+
 ## 存储数据大小配置
 volumeClaimTemplate:
   storageClassName: nfs-storage
@@ -49,6 +53,7 @@ secretMounts:
   - name: elastic-certificates
     secretName: elastic-certificates
     path: /usr/share/elasticsearch/config/certs
+    defaultMode: 0755
 ## 允许您在/usr/share/elasticsearch/config/中添加任何自定义配置文件,例如 elasticsearch.yml
 ## ElasticSearch 7.x 默认安装了 x-pack 插件，部分功能免费，这里我们配置下
 ## 下面注掉的部分为配置 https 证书，配置此部分还需要配置 helm 参数 protocol 值改为 https
@@ -59,11 +64,7 @@ esConfig:
     xpack.security.transport.ssl.verification_mode: certificate
     xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
     xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-    xpack.monitoring.exporters.my_local.type: local
-    xpack.monitoring.exporters.my_local.use_ingest: false
-    # xpack.security.http.ssl.enabled: true
-    # xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-    # xpack.security.http.ssl.keystore.path: /usr/sshare/elasticsearch/config/certs/elastic-certificates.p12
+
 ## 环境变量配置，这里引入上面设置的用户名、密码 secret 文件
 extraEnvs:
   - name: ELASTIC_USERNAME

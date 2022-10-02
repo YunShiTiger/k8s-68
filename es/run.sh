@@ -45,16 +45,16 @@ tar -zxvf elasticsearch-7.16.3.tgz
 cp elasticsearch/values.yaml ./values-test.yaml
 
 # 安装 ElasticSearch Master 节点
-helm install elasticsearch-master -f es-master-values.yaml --version 7.7.1 elastic/elasticsearch
+helm -n test-middleware install elasticsearch-master -f es-master-values.yaml --version 7.16.3 elastic/elasticsearch
 
 # 安装 ElasticSearch Data 节点
-helm install elasticsearch-data -f es-data-values.yaml --version 7.7.1 elastic/elasticsearch
+helm install elasticsearch-data -f es-data-values.yaml --version 7.16.3 elastic/elasticsearch
 
 # 安装 ElasticSearch Client 节点
-helm install elasticsearch-client -f es-client-values.yaml --version 7.7.1 elastic/elasticsearch
+helm install elasticsearch-client -f es-client-values.yaml --version 7.16.3 elastic/elasticsearch
 
 # 安装 kibana 节点
-helm install kibana -f es-kibana-values.yaml --version 7.7.1 elastic/kibana
+helm install kibana -f es-kibana-values.yaml --version 7.16.3 elastic/kibana
 
 # kubectl get pods --namespace=default -l app=elasticsearch-master -w
 # helm test elasticsearch-master --cleanup

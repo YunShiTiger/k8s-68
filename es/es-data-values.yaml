@@ -12,7 +12,7 @@ roles:
 # ============镜像配置============
 ## 指定镜像与镜像版本
 image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "7.7.1"
+imageTag: "7.16.1"
 ## 副本数
 replicas: 3
 
@@ -58,9 +58,6 @@ esConfig:
     xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
     xpack.monitoring.exporters.my_local.type: local
     xpack.monitoring.exporters.my_local.use_ingest: false
-    # xpack.security.http.ssl.enabled: true
-    # xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-    # xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
 ## 环境变量配置，这里引入上面设置的用户名、密码 secret 文件
 extraEnvs:
   - name: ELASTIC_USERNAME
