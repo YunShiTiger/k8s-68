@@ -1,16 +1,20 @@
+# https://mp.weixin.qq.com/s/xKPAHWuLBMYuaVzpel5rUQ
 # store1
-yum install nfs-utils -y
+yum install -y nfs-utils rpcbind
 rm -rf /data/volumes
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=disabled/' /etc/selinux/config
+
 mkdir -p /data/volumes/v{1,2,3,4,5,6,7}
-chown -R 1001:1001 /data/volumes/
+chown -R nfsnobody:nfsnobody /data/volumes
 echo -e '
-/data/volumes/v1    10.10.0.0/16(rw)
-/data/volumes/v2    10.10.0.0/16(rw)
-/data/volumes/v3    10.10.0.0/16(rw)
-/data/volumes/v4    10.10.0.0/16(rw)
-/data/volumes/v5    10.10.0.0/16(rw)
-/data/volumes/v6    10.10.0.0/16(rw)
-/data/volumes/v7    10.10.0.0/16(rw)
+/data/volumes/v1    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v2    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v3    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v4    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v5    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v6    10.10.0.0/16(rw,async,no_root_squash)
+/data/volumes/v7    10.10.0.0/16(rw,async,no_root_squash)
 '> /etc/exports
 exportfs -arv
 
@@ -24,13 +28,15 @@ firewall-cmd --reload
 
 
 
+
 # node01
-yum install nfs-utils -y
+yum install nfs-utils rpcbind -y
 systemctl start nfs
 systemctl enable nfs
 
-mount -t nfs 192.168.33.104:/data/volumes/v1 /root/nfs
-k8s 各节点不需要这个操作
+# k8s 各节点不需要这个操作
+mount -t nfs -o nolock,vers=4 192.168.33.104:/data/volumes/v1 /root/nfs
+
 
 
 ###############方式一###################
