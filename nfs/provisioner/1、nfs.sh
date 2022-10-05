@@ -7,7 +7,7 @@ sed -i 's/^SELINUX=enforcing$/SELINUX=disabled/' /etc/selinux/config
 
 mkdir -p /nfs
 chown -R nfsnobody:nfsnobody /nfs
-echo '/nfs   192.168.0.0/16(rw,async,no_root_squash)'> /etc/exports
+echo '/nfs   192.168.0.0/16(rw,async,no_root_squash)' >/etc/exports
 exportfs -arv
 
 systemctl start nfs
@@ -17,7 +17,6 @@ systemctl enable rpcbind.service
 showmount -e
 firewall-cmd --add-service=nfs --permanent
 firewall-cmd --reload
-
 
 # node01
 yum install nfs-utils rpcbind -y

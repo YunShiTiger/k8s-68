@@ -1,0 +1,56 @@
+#  kubectl create secret docker-registry harbor.k8s.com --docker-server=harbor.k8s.com --docker-username='admin' --docker-password='admin@123'
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dns
+  labels:
+    app: dns
+spec:
+  selector:
+    matchLabels:
+      app: dns
+  template:
+    metadata:
+      labels:
+        app: dns
+    spec:
+      # imagePullSecrets:
+        # - name: harbor.k8s.com
+      hostNetwork: true
+      containers:
+      - name: dns
+        image: newnius/dnsmasq
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: dns
+          mountPath: /etc
+        # ports:
+        # - name:  dns
+        #   containerPort:  53
+        #   hostPort: 53
+        #   protocol: UDP
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+      - name: dns
+        configMap:
+          name: dns
+          items:
+          - path: res
+            key : dns
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dns
+  labels:
+    app: dns
+data:
+  dns: |
+    harbor.k8s.com 192.168.10.201
+    harbor.k8s.com 192.168.10.202
+    harbor.k8s.com 192.168.10.203
+
+

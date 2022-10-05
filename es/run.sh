@@ -36,14 +36,14 @@ kubectl -n test-middleware create secret generic elastic-certificate-pem --from-
 kubectl -n test-middleware create secret generic elastic-credentials --from-literal=username=elastic --from-literal=password=admin@123
 kubectl -n test-middleware get secret
 
-cd /root/elk/es/
+# cd /root/elk/es/
 # 添加 Chart 仓库
 helm repo add elastic https://helm.elastic.co
 helm repo update
 # 拉取 chart 到本地 /root/elk/es 目录
-helm pull elastic/elasticsearch --version 7.16.3
-tar -zxvf elasticsearch-7.16.3.tgz
-cp elasticsearch/values.yaml ./values-test.yaml
+# helm pull elastic/elasticsearch --version 7.16.3
+# tar -zxvf elasticsearch-7.16.3.tgz
+# cp elasticsearch/values.yaml ./values-test.yaml
 
 # 安装 ElasticSearch Master 节点
 helm -n test-middleware install elasticsearch-master -f es-master-values.yaml --version 7.16.3 elastic/elasticsearch
