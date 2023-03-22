@@ -1,22 +1,25 @@
+# v1.19.4 的集群
 # kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
 # docker cp 4827a1b3b59a:/etc/nginx/nginx.conf .
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: ingress-nginx
   name: myingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: '"Authentication Required - admin"'
   labels:
     name: myingress
 spec:
-  tls:
-    - hosts:
-        - "myapp.magedu.com"
-      secretName: "nginx-ingress-secret"
+  # tls:
+  #   - hosts:
+  #       - "myapp.magedu.com"
+  #     secretName: "nginx-ingress-secret"
   rules:
-    - host: "myapp.magedu.com"
+    - host: "nginx.k8s.com"
       http:
         paths:
           - pathType: Prefix
@@ -55,11 +58,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: myapp-dp
-  # namespace: ingress-nginx
   labels:
     app: myapp-dp
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -86,4 +88,6 @@ spec:
           #     cpu: "0.2"
 #  pod*3 + rs
 #  rs 会替换pod的名字 spec.template.metadata.name 不生效
+# kubectl taint node --all node-role.kubernetes.io/master-
+# sealos init --passwd '20153367' --master 10.10.10.211 --pkg-url /tmp/kube1.19.4.tar.gz   --version v1.19.4
 
