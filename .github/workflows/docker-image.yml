@@ -22,7 +22,7 @@ jobs:
     - name: 'install'
       run: sudo apt -y install vim wget unzip skopeo 
     - name: 'login'
-      run: skopeo login -u 15733101139 registry.cn-hangzhou.aliyuncs.com -p ${{ REGISTERY_PASSWORD }}
+      run: skopeo login -u 15733101139 registry.cn-hangzhou.aliyuncs.com -p "${{ REGISTERY_PASSWORD }}"
    
     - name: sync
       run: skopeo sync --src docker --dest docker kindest/node registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false 
