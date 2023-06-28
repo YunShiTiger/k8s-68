@@ -1,0 +1,23 @@
+name: Script
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+
+  build:
+    runs-on: centos:8
+    steps:
+
+    - name: 'Gen New Year Calendar'
+      run: sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+           sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
+           yum makecache && \
+           yum update -y && \
+           yum -y install vim wget unzip skopeo -y 
+      
+    - name: 'Show Diff'
+      run: skopeo login -u 15733101139 registry.cn-hangzhou.aliyuncs.com && \
+           skopeo sync --src docker --dest docker kindest/node registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false 
+ 
