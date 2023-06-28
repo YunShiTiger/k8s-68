@@ -1,4 +1,4 @@
-name: Script
+name: kindest
 on:
   schedule:
     - cron: '*/1 * * * *'

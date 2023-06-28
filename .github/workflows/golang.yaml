@@ -1,4 +1,4 @@
-name: Script
+name: golang
 on:
   schedule:
     - cron: '*/1 * * * *'

@@ -1,4 +1,4 @@
-name: Script
+name: metric-server
 on:
   schedule:
     - cron: '*/1 * * * *'
@@ -8,6 +8,7 @@ on:
     branches: [ "main" ]
 jobs:
   build:
+
     runs-on: ubuntu-latest
     steps:
     - name: 'update'
