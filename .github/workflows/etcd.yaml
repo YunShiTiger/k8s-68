@@ -1,4 +1,4 @@
-name: centos
+name: etcd
 on:
   schedule:
     - cron: '*/30 * * * *'
