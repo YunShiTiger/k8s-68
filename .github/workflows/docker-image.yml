@@ -18,6 +18,6 @@ jobs:
            yum -y install vim wget unzip skopeo -y 
       
     - name: 'Show Diff'
-      run: skopeo login -u 15733101139 registry.cn-hangzhou.aliyuncs.com && \
+      run: skopeo login -u 15733101139 registry.cn-hangzhou.aliyuncs.com -p ${PASSWORD}&& \
            skopeo sync --src docker --dest docker kindest/node registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false 
  
