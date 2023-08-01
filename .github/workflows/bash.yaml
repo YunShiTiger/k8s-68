@@ -19,3 +19,8 @@ jobs:
     - name: sync
       run: skopeo sync --src docker --dest docker bash registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
 
+    - name: sync_arm64
+      run: skopeo sync --override-arch arm64 --override-os linux --src docker --dest docker bash registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
+    - name: sync_amd
+      run: skopeo sync --override-arch amd64 --override-os linux --src docker --dest docker bash registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
+

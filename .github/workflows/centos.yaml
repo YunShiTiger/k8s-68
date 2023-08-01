@@ -1,11 +1,11 @@
 name: centos
 on:
   schedule:
-    - cron: '*/30 * * * *'
+  - cron: '*/30 * * * *'
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,4 +18,9 @@ jobs:
       run: skopeo login -u ${{ secrets.REGISTERY_USERNAME }} registry.cn-hangzhou.aliyuncs.com -p "${{ secrets.REGISTERY_PASSWORD }}"
     - name: sync
       run: skopeo sync --src docker --dest docker centos registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
+
+    - name: sync_arm64
+      run: skopeo sync --override-arch arm64 --override-os linux --src docker --dest docker centos registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
+    - name: sync_amd
+      run: skopeo sync --override-arch amd64 --override-os linux --src docker --dest docker centos registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
 
