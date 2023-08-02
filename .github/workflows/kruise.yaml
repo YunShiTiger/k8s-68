@@ -16,8 +16,6 @@ jobs:
       run: sudo apt -y install vim wget unzip skopeo
     - name: 'login'
       run: skopeo login -u ${{ secrets.REGISTERY_USERNAME }} registry.cn-hangzhou.aliyuncs.com -p "${{ secrets.REGISTERY_PASSWORD }}"
-    - name: sync_arm64
-      run: skopeo sync --override-arch arm64 --override-os linux --src docker --dest docker openkruise/kruise-manager registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
-    - name: sync_amd
-      run: skopeo sync --override-arch amd64 --override-os linux --src docker --dest docker openkruise/kruise-manager registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
+    - name: sync
+      run: skopeo sync --src docker --dest docker openkruise/kruise-manager registry.cn-hangzhou.aliyuncs.com/acejilam --src-tls-verify=false --dest-tls-verify=false
 
